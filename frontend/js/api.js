@@ -6,7 +6,7 @@
 
 export class ApiClient {
   constructor(baseUrl = '') {
-    this.baseUrl = baseUrl || (['8000', '5173'].includes(window.location.port) ? '' : 'http://localhost:8000');
+    this.baseUrl = baseUrl || (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
     this.token = localStorage.getItem('hotel_ops_token') || null;
     this.isOnline = false;
   }

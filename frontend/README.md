@@ -43,3 +43,9 @@ Vite writes the build to `frontend/dist`. FastAPI serves this directory at `/` w
 cd backend
 uvicorn app.main:app --reload
 ```
+
+## Deploy to Netlify
+
+The repository root contains `netlify.toml`, which configures Netlify to build the `frontend/` project and publish `frontend/dist`. Netlify can serve the interface as a static site, but it does not host the FastAPI/PostgreSQL backend. Without a backend, the app opens in local demo mode.
+
+To connect a separately deployed API, set the Netlify environment variable `VITE_API_URL` to the backend's public origin (for example, `https://api.example.com`, without a trailing slash), then trigger a new deploy. Configure the backend's `CORS_ORIGINS` to include the Netlify site origin. Changes to Vite environment variables take effect at build time.
