@@ -1,0 +1,29 @@
+[project]
+name = "hotel-operations-api"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "alembic>=1.14",
+  "fastapi>=0.115",
+  "httpx>=0.28",
+  "passlib[bcrypt]>=1.7.4",
+  "psycopg[binary]>=3.2",
+  "pydantic-settings>=2.6",
+  "python-multipart>=0.0.20",
+  "PyJWT>=2.10",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "sqlalchemy>=2.0",
+  "uvicorn[standard]>=0.32"
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

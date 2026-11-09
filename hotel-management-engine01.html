@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hotel Management Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--bg:#EDF1F0;--sf:#FFFFFF;--sf2:#F4F7F6;--ink:#13222B;--mut:#5B6C75;--line:#D9E1DF;
+--brand:#0D6A6A;--brand2:#0A5555;--onbrand:#FFFFFF;--brass:#B0802A;--side:#10242B;--sideink:#B9CBCB;--sidehi:#1C3B43;
+--ok:#1F8556;--occ:#2A5DAB;--warn:#A96209;--bad:#B23A32;
+--okbg:#E1F2E9;--occbg:#E2EAF8;--warnbg:#FAEACF;--badbg:#F8E0DE;--brandbg:#DAEEED;
+--c1:#0D6A6A;--c2:#B0802A;--c3:#2A5DAB;--c4:#8A5A9C;--c5:#C0523A;--c6:#6E8B2A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+--bg:#0B1518;--sf:#132126;--sf2:#182A30;--ink:#E4EEEE;--mut:#8FA4A8;--line:#243A41;
+--brand:#38B2A6;--brand2:#2C9A8F;--onbrand:#06201E;--brass:#D9A649;--side:#08110F;--sideink:#9DB3B3;--sidehi:#152A30;
+--ok:#4CC58A;--occ:#6E9DEB;--warn:#E3A044;--bad:#EA7A70;
+--okbg:#12352A;--occbg:#15294A;--warnbg:#3A2A10;--badbg:#3D1A18;--brandbg:#12332F;
+--c1:#38B2A6;--c2:#D9A649;--c3:#6E9DEB;--c4:#B98BCB;--c5:#E58466;--c6:#9DBB55}}
+:root[data-theme="dark"]{color-scheme:dark;
+--bg:#0B1518;--sf:#132126;--sf2:#182A30;--ink:#E4EEEE;--mut:#8FA4A8;--line:#243A41;
+--brand:#38B2A6;--brand2:#2C9A8F;--onbrand:#06201E;--brass:#D9A649;--side:#08110F;--sideink:#9DB3B3;--sidehi:#152A30;
+--ok:#4CC58A;--occ:#6E9DEB;--warn:#E3A044;--bad:#EA7A70;
+--okbg:#12352A;--occbg:#15294A;--warnbg:#3A2A10;--badbg:#3D1A18;--brandbg:#12332F;
+--c1:#38B2A6;--c2:#D9A649;--c3:#6E9DEB;--c4:#B98BCB;--c5:#E58466;--c6:#9DBB55}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:14px/1.5 'Public Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.disp{font-family:'Bricolage Grotesque','Public Sans',system-ui,sans-serif;letter-spacing:-.01em;margin:0;font-weight:700}
+h1{font-size:20px}h2{font-size:17px}h3{font-size:15px}h4{font-size:13px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100%}
+.side{background:var(--side);color:var(--sideink);position:sticky;top:env(safe-area-inset-top,0px);height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;overflow-y:auto;z-index:30}
+.brand{display:flex;gap:10px;align-items:center;padding:18px 16px 14px;color:#fff}
+.brand b{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;display:block;line-height:1.2}
+.brand small{color:var(--sideink);font-size:11.5px}
+.mark{width:34px;height:34px;flex:none}
+#nav{padding:4px 8px 16px;flex:1}
+.ng{font-size:11.5px;color:#7F9797;padding:14px 10px 4px;font-weight:600}
+.ni{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:none;color:var(--sideink);border-radius:8px;cursor:pointer;text-align:left}
+.ni svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ni:hover{background:var(--sidehi);color:#fff}
+.ni[aria-current="page"]{background:var(--sidehi);color:#fff;box-shadow:inset 3px 0 0 var(--brass)}
+.ni .n{margin-left:auto;background:var(--brass);color:#111;border-radius:99px;font-size:11px;padding:0 7px;font-weight:600}
+.sidefoot{padding:12px 16px;border-top:1px solid var(--sidehi);font-size:12px;color:#8AA0A0}
+.main{min-width:0}
+.top{display:flex;align-items:center;gap:10px;padding:12px 24px;background:var(--sf);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.grow{flex:1}
+.menu{display:none}
+.scrim{display:none}
+.content{padding:20px 24px 48px;max-width:1500px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sf);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--sf2)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--onbrand)}
+.btn.pri:hover{background:var(--brand2)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.sm{padding:3px 9px;font-size:12.5px;border-radius:6px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.ib{border:1px solid var(--line);background:var(--sf);border-radius:8px;width:36px;height:36px;cursor:pointer;display:grid;place-items:center}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card>h3,.card>.hd h3{margin-bottom:10px}
+.hd{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.hd h3{margin:0}
+.g2,.g3,.g4{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mt{margin-top:16px}
+.muted{color:var(--mut)}.small{font-size:12.5px}.num{text-align:right;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bold{font-weight:600}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.85fr);gap:16px}
+.occ-big{font-family:'Bricolage Grotesque',sans-serif;font-size:56px;line-height:1;font-weight:700;letter-spacing:-.03em}
+.strip{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:14px 0 10px;background:var(--sf2)}
+.strip i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.kpi{background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi small{color:var(--mut);display:block}
+.kpi b{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;letter-spacing:-.02em;display:block;margin-top:2px}
+.kpi span{font-size:12px;color:var(--mut)}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:500;background:var(--sf2);color:var(--mut);white-space:nowrap;border:1px solid transparent}
+.chip.ok{background:var(--okbg);color:var(--ok)}.chip.occ{background:var(--occbg);color:var(--occ)}.chip.warn{background:var(--warnbg);color:var(--warn)}.chip.bad{background:var(--badbg);color:var(--bad)}.chip.brand{background:var(--brandbg);color:var(--brand)}
+.tw{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse}
+table.t th{font-weight:600;font-size:12.5px;color:var(--mut);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--sf)}
+table.t td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tbody tr.click{cursor:pointer}
+table.t tbody tr.click:hover{background:var(--sf2)}
+table.t th.num,table.t td.num{text-align:right}
+table.t tfoot td{font-weight:600;border-top:2px solid var(--line);border-bottom:0;background:var(--sf2)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tab{border:0;background:none;padding:9px 14px;cursor:pointer;color:var(--mut);font-weight:500;border-bottom:2px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sf)}
+.seg button{border:0;background:none;padding:6px 11px;cursor:pointer;color:var(--mut);font-weight:500;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--brandbg);color:var(--brand)}
+.bar-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld>span{font-size:12.5px;color:var(--mut);font-weight:500}
+.fld input,.fld select,.fld textarea,.inp{border:1px solid var(--line);background:var(--sf);border-radius:8px;padding:7px 10px;min-width:0;width:100%}
+.inp.sm{width:auto;padding:5px 8px}
+.fld textarea{resize:vertical;min-height:60px}
+.frm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.frm .full{grid-column:1/-1}
+.frm.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.note{background:var(--sf2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px}
+.note.warn{background:var(--warnbg);border-color:transparent;color:var(--warn)}
+.note.bad{background:var(--badbg);border-color:transparent;color:var(--bad)}
+.note.ok{background:var(--okbg);border-color:transparent;color:var(--ok)}
+.empty{padding:28px;text-align:center;color:var(--mut)}
+.modal{position:fixed;inset:0;background:rgba(8,18,20,.55);display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow-y:auto;z-index:50}
+.modal.open{display:flex}
+.dlg{background:var(--sf);border-radius:12px;width:min(560px,100%);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.dlg.wide{width:min(900px,100%)}
+.dh{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.dh h2{flex:1}
+.db{padding:16px 18px}
+.df{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line);background:var(--sf2);border-radius:0 0 12px 12px}
+#toasts{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:80}
+.toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:8px;max-width:340px;font-weight:500}
+.toast.bad{background:var(--bad);color:#fff}.toast.ok{background:var(--ok);color:#fff}
+.chart{width:100%;height:auto;display:block}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--mut);font-size:10.5px}
+.hb{display:grid;grid-template-columns:110px minmax(0,1fr) 84px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+.hb .b{height:9px;background:var(--sf2);border-radius:5px;overflow:hidden}
+.hb .b i{display:block;height:100%;border-radius:5px}
+.donut{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.donut svg{width:150px;height:150px;flex:none}
+.list .li{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.list .li:last-child{border-bottom:0}
+.li .rn{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;min-width:44px}
+.tape{border:1px solid var(--line);border-radius:10px;overflow:auto;background:var(--sf);max-height:74vh}
+.tr{display:flex;min-width:max-content;width:100%}
+.tl{position:sticky;left:0;z-index:3;flex:none;width:138px;background:var(--sf);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 10px;display:flex;flex-direction:column;justify-content:center;height:40px;line-height:1.2}
+.tl b{font-family:'Bricolage Grotesque',sans-serif}
+.tl small{color:var(--mut);font-size:11px}
+.tg{display:grid;flex:1;grid-template-columns:repeat(var(--n),minmax(58px,1fr));grid-template-rows:40px;position:relative}
+.tc{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:0}
+.tc:hover{background:var(--brandbg)}
+.tc.wk{background:var(--sf2)}.tc.td{box-shadow:inset 2px 0 0 var(--brass),inset -2px 0 0 var(--brass)}
+.tr.head{position:sticky;top:0;z-index:5}
+.tr.head .tl,.tr.head .th{background:var(--sf2)}
+.th{border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;font-size:12px;line-height:1.2;display:flex;flex-direction:column;justify-content:center}
+.th.td{color:var(--brand);font-weight:700}
+.rb{z-index:2;margin:5px 2px;border-radius:6px;padding:0 8px;font-size:12px;font-weight:500;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:0;cursor:pointer;text-align:left}
+.rb.confirmed{background:var(--brandbg);color:var(--brand);box-shadow:inset 3px 0 0 var(--brand)}
+.rb.checked_in{background:var(--occ);color:#fff}
+.rb.checked_out{background:var(--sf2);color:var(--mut);box-shadow:inset 3px 0 0 var(--line)}
+.rb.ooo{background:repeating-linear-gradient(45deg,var(--badbg),var(--badbg) 6px,var(--sf) 6px,var(--sf) 12px);color:var(--bad);cursor:default}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.rc{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--sf);border-top:4px solid var(--line)}
+.rc.occupied{border-top-color:var(--occ)}.rc.clean,.rc.inspected{border-top-color:var(--ok)}.rc.dirty{border-top-color:var(--warn)}.rc.ooo{border-top-color:var(--bad)}
+.rc .rn{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700}
+.cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.cat button{border:1px solid var(--line);background:var(--sf);border-radius:8px;padding:9px 10px;text-align:left;cursor:pointer}
+.cat button:hover{border-color:var(--brand);background:var(--brandbg)}
+.cat b{display:block;font-weight:600}
+.stmt td.sub{padding-left:26px;color:var(--mut)}
+.stmt tr.tot td{font-weight:700;border-top:1px solid var(--ink)}
+.stmt tr.hdr td{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;padding-top:16px;border-bottom:1px solid var(--line)}
+.stmt tr.gt td{font-weight:700;font-size:15px;border-top:2px solid var(--ink);border-bottom:3px double var(--ink)}
+.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:sp 1s linear infinite;margin:14px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pay-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.pm{border:1px solid var(--line);background:var(--sf);border-radius:8px;padding:9px 6px;cursor:pointer;font-weight:500}
+.pm[aria-pressed="true"]{border-color:var(--brand);background:var(--brandbg);color:var(--brand)}
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
+@media (max-width:900px){
+ .app{grid-template-columns:1fr}
+ .side{position:fixed;left:0;top:0;bottom:0;height:auto;width:250px;transform:translateX(-100%);transition:transform .2s;padding-top:env(safe-area-inset-top,0px)}
+ .app.nav-open .side{transform:none}
+ .app.nav-open .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25}
+ .menu{display:grid}
+ .top{padding:10px 14px}.content{padding:16px 14px 40px}
+ .g2,.g3{grid-template-columns:1fr}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .frm,.frm.c3{grid-template-columns:1fr}
+ .hb{grid-template-columns:90px minmax(0,1fr) 74px}
+ .occ-big{font-size:44px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+ <aside class="side" id="side" aria-label="Main navigation">
+  <div class="brand">
+   <svg class="mark" viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="2" width="30" height="32" rx="7" fill="#B0802A"/><circle cx="18" cy="11" r="3.4" fill="#10242B"/><path d="M18 14.5v14M18 21h5M18 26h4" stroke="#10242B" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>
+   <div><b id="hname">Hotel</b><small>Management engine</small></div>
+  </div>
+  <nav id="nav"></nav>
+  <div class="sidefoot" id="bdate"></div>
+ </aside>
+ <div class="scrim" data-act="navClose"></div>
+ <div class="main">
+  <header class="top">
+   <button class="ib menu" data-act="navToggle" aria-label="Open menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+   <h1 id="ttl">Dashboard</h1>
+   <div class="grow"></div>
+   <button class="ib" data-act="theme" aria-label="Switch colour theme" title="Switch colour theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4v16" /><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+   <button class="btn pri" data-act="newBooking">New booking</button>
+  </header>
+  <main id="view" class="content"></main>
+ </div>
+</div>
+<div id="modal" class="modal" role="dialog" aria-modal="true"></div>
+<div id="toasts" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+/* ---------- utilities ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const round2=n=>Math.round((n+Number.EPSILON)*100)/100;
+const sum=(a,k)=>a.reduce((s,x)=>s+(typeof k==='function'?k(x):x[k]||0),0);
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)};
+const todayISO=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const nightsBetween=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
+const nowTime=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const fmtD=s=>{if(!s)return'';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})};
+const fmtS=s=>{const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})};
+const dow=s=>new Date(s+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short'});
+const isWk=s=>{const g=new Date(s+'T12:00:00').getDay();return g===0||g===6};
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const LS='hms.v1';
+let S=null;
+const cur=()=>S.settings.currency;
+const money=n=>(n<0?'-':'')+cur()+' '+Math.round(Math.abs(n)).toLocaleString('en-US');
+const money2=n=>(n<0?'-':'')+cur()+' '+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const short=n=>{const a=Math.abs(n);return a>=1e6?(n/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,'')+'M':a>=1e3?(n/1e3).toFixed(0)+'k':String(Math.round(n))};
+const pct=n=>(isFinite(n)?Math.round(n*100):0)+'%';
+
+/* ---------- seed data ---------- */
+function seed(){
+ const R=rng(7331),ri=(a,b)=>a+Math.floor(R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
+ const T=todayISO();
+ const settings={hotel:'Savannah Crest Hotel',currency:'KES',vat:16,checkInTime:'14:00',checkOutTime:'10:00',openingCash:2000000,taxPin:'',
+  sources:['Direct','Walk-in','Phone','Booking.com','Expedia','Corporate','Travel agent'],
+  mpesaEnv:'sandbox',mpesaShort:'174379',mpesaCallback:'',cardProvider:'Stripe',cardKey:''};
+ const types=[
+  {id:'t_sgl',code:'SGL',name:'Standard Single',rate:6500,cap:1,beds:'1 single',amen:'WiFi, TV, Desk, En-suite'},
+  {id:'t_dbl',code:'DBL',name:'Standard Double',rate:8500,cap:2,beds:'1 double',amen:'WiFi, TV, Desk, En-suite'},
+  {id:'t_dlx',code:'DLX',name:'Deluxe King',rate:12500,cap:2,beds:'1 king',amen:'WiFi, Smart TV, Minibar, Balcony'},
+  {id:'t_fam',code:'FAM',name:'Family Room',rate:16000,cap:4,beds:'1 king + 2 single',amen:'WiFi, Smart TV, Minibar, Sofa bed'},
+  {id:'t_ste',code:'STE',name:'Executive Suite',rate:24000,cap:3,beds:'1 king + lounge',amen:'WiFi, Lounge, Minibar, Bathtub, Work area'}];
+ const layout=[[1,[['t_sgl',5],['t_dbl',3]]],[2,[['t_dbl',4],['t_dlx',4]]],[3,[['t_dlx',4],['t_fam',3]]],[4,[['t_fam',1],['t_ste',3]]]];
+ const rooms=[];
+ layout.forEach(([fl,parts])=>{let k=0;parts.forEach(([t,n])=>{for(let i=0;i<n;i++){k++;rooms.push({id:'rm'+(fl*100+k),no:String(fl*100+k),floor:fl,typeId:t,hk:'clean',ooo:false,oooReason:'',assignee:''})}})});
+ const plans=[{id:'p_rack',name:'Rack rate',mult:1},{id:'p_corp',name:'Corporate',mult:.85},{id:'p_adv',name:'Advance purchase',mult:.9},{id:'p_long',name:'Long stay (5+ nights)',mult:.8}];
+ const staff=[['Grace Wambui','Front desk','Morning'],['Peter Otieno','Front desk','Evening'],['Lydia Achieng','Front desk','Night'],['Mary Njeri','Housekeeping','Morning'],['Faith Chebet','Housekeeping','Morning'],['Joyce Atieno','Housekeeping','Morning'],['Samuel Kiptoo','Maintenance','Morning'],['David Mutua','Security','Night'],['Hassan Ali','F&B','Morning'],['Irene Wafula','Management','Morning']].map((s,i)=>({id:'st'+(i+1),name:s[0],role:s[1],shift:s[2],phone:'+2547'+ri(10000000,29999999),active:true}));
+ const fn=['Wanjiru','Otieno','Achieng','Kamau','Njeri','Kiplagat','Chebet','Odhiambo','Amina','Hassan','Fatuma','Mutua','Wairimu','Barasa','Naliaka','Sarah','James','Emily','Daniel','Priya','Chen','Lars','Marta','Ahmed','Grace','Brian','Faith','Kevin','Linet','Peter'];
+ const ln=['Mwangi','Otieno','Kariuki','Wekesa','Njoroge','Omondi','Kimani','Rotich','Abdi','Wafula','Mutiso','Smith','Patel','Nguyen','Johansson','Rossi','Khan','Brown','Kilonzo','Gathogo'];
+ const guests=[];
+ for(let i=0;i<44;i++){const a=pick(fn),b=pick(ln);const foreign=['Smith','Patel','Nguyen','Johansson','Rossi','Khan','Brown'].includes(b);
+  guests.push({id:'g'+(i+1),name:a+' '+b,phone:'+2547'+ri(10000000,29999999),email:(a+'.'+b).toLowerCase()+'@example.com',idNo:String(ri(20000000,39999999)),nationality:foreign?pick(['United Kingdom','India','Vietnam','Sweden','Italy','Pakistan','Canada']):'Kenya',company:R()<.2?pick(['Safaricom PLC','KCB Group','Bidco Africa','UNEP','Deloitte EA']):'',vip:R()<.08,notes:''})}
+ const catalog=[
+  ['F&B','Breakfast buffet',1800],['F&B','Lunch set menu',2400],['F&B','Dinner à la carte',3200],['F&B','Coffee or tea',350],['F&B','Soft drink',300],['F&B','Beer',500],['F&B','Room service fee',400],
+  ['Laundry','Shirt wash and iron',250],['Laundry','Suit dry-clean',1200],['Minibar','Water 500ml',150],['Minibar','Snack pack',450],
+  ['Spa','Swedish massage 60 min',5500],['Spa','Facial treatment',4000],
+  ['Transport','Airport transfer',4500],['Transport','City tour (half day)',7500],
+  ['Other','Late check-out fee',2500],['Other','Extra bed',2000],['Other','Parking (per day)',500]].map((c,i)=>({id:'c'+(i+1),dept:c[0],name:c[1],price:c[2]}));
+ const inventory=[['Bath towels','Linen','pcs',180,120,650],['Bed sheets (queen)','Linen','sets',90,80,2400],['Pillow cases','Linen','pcs',210,150,320],['Shampoo 30ml','Toiletries','pcs',420,500,28],['Soap bar','Toiletries','pcs',640,500,18],['Toilet paper','Toiletries','rolls',300,240,35],['Water 500ml','Minibar','bottles',260,200,45],['Soft drinks','Minibar','cans',140,150,70],['Snack packs','Minibar','pcs',95,80,190],['Coffee beans','F&B','kg',22,15,1800],['Cooking oil','F&B','litres',48,30,420],['Floor cleaner','Cleaning','litres',36,25,260],['Laundry detergent','Cleaning','kg',30,40,310],['Light bulbs LED','Engineering','pcs',60,40,220]].map((x,i)=>({id:'i'+(i+1),name:x[0],category:x[1],unit:x[2],qty:x[3],reorder:x[4],cost:x[5]}));
+ const data={v:2,settings,types,rooms,plans,guests,res:[],txns:[],expenses:[],tasks:[],inventory,staff,catalog,gateway:[],roomAvailability:[],journalEntries:[],seq:{res:0,txn:0}};
+ S=data;
+ rooms.forEach(r=>{for(let d=addDays(T,-90);d<=addDays(T,365);d=addDays(d,1))data.roomAvailability.push({roomId:r.id,date:d,sellable:true,reason:''})});
+ rooms.find(r=>r.no==='106').ooo=true;rooms.find(r=>r.no==='106').oooReason='AC compressor fault';
+ rooms.find(r=>r.no==='305').ooo=true;rooms.find(r=>r.no==='305').oooReason='Bathroom leak';
+ ['106','305'].forEach(no=>{const r=rooms.find(x=>x.no===no);for(let d=addDays(T,-3);d<=addDays(T,90);d=addDays(d,1)){const row=data.roomAvailability.find(x=>x.roomId===r.id&&x.date===d);row.sellable=false;row.reason=r.oooReason}});
+ const alpha='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+ const mkPay=(resId,date,amount,method)=>{let ref,note='';
+  if(method==='M-Pesa'){ref='S'+Array.from({length:9},()=>alpha[ri(0,33)]).join('');note='M-Pesa STK push'}
+  else if(method==='Card'){ref='AUTH'+ri(100000,999999);note=pick(['Visa','Mastercard'])+' •••• '+ri(1000,9999)}
+  else if(method==='Cash'){ref='CSH'+ri(1000,9999)}else{ref='BNK'+ri(10000,99999);note='Bank transfer'}
+  return {id:'T'+String(++data.seq.txn).padStart(6,'0'),resId,date,time:String(ri(8,20)).padStart(2,'0')+':'+String(ri(0,59)).padStart(2,'0'),type:'payment',dept:'',method,net:0,tax:0,amount:round2(amount),ref,note}};
+ const srcW=['Direct','Direct','Walk-in','Phone','Booking.com','Booking.com','Expedia','Corporate','Corporate','Travel agent'];
+ const exAmt={'F&B':[800,4500],Laundry:[300,1500],Spa:[2500,6000],Minibar:[250,1200],Transport:[1500,5000]};
+ const exNote={'F&B':['Restaurant dinner','Room service','Breakfast buffet'],Laundry:['Laundry'],Spa:['Massage'],Minibar:['Minibar'],Transport:['Airport transfer']};
+ const meth=()=>pick(['M-Pesa','M-Pesa','M-Pesa','Card','Card','Cash','Bank']);
+ rooms.forEach(rm=>{
+  const ty=types.find(t=>t.id===rm.typeId);let c=addDays(T,-75);const end=addDays(T,42);
+  while(c<end){
+   if(R()<.27){c=addDays(c,ri(1,3));continue}
+   const n=ri(1,6),ci=c,co=addDays(c,n);
+   if(rm.ooo&&ci<addDays(T,6)&&co>addDays(T,-3)){c=addDays(T,6);continue}
+   c=co;
+   const src=pick(srcW),plan=src==='Corporate'?'p_corp':(n>=5?'p_long':(R()<.15?'p_adv':'p_rack'));
+   const rate=Math.round(ty.rate*plans.find(p=>p.id===plan).mult/50)*50;
+   let status;
+   if(co<T)status=R()<.92?'checked_out':(R()<.6?'cancelled':'no_show');
+   else if(co===T)status=R()<.55?'checked_in':'checked_out';
+   else if(ci<T)status='checked_in';
+   else if(ci===T)status=R()<.4?'checked_in':'confirmed';
+   else status=R()<.03?'cancelled':'confirmed';
+   const g=pick(guests),cr=addDays(ci,-ri(3,30));
+   const r={id:'r'+(++data.seq.res),code:'R'+String(data.seq.res).padStart(5,'0'),guestId:g.id,roomId:rm.id,checkIn:ci,checkOut:co,adults:Math.min(ty.cap,ri(1,ty.cap)),children:ty.cap>2?ri(0,1):0,status,source:src,planId:plan,rate,notes:'',created:cr>T?T:cr};
+   data.res.push(r);
+   if(status==='checked_in'||status==='checked_out'){
+    const last=addDays(co,-1),maxD=last<T?last:T,cnt=ri(0,Math.min(4,n+1));
+    for(let i=0;i<cnt;i++){const dept=pick(['F&B','F&B','F&B','Laundry','Spa','Minibar','Transport']);const [lo,hi]=exAmt[dept];const net=Math.round(ri(lo,hi)/10)*10,tax=round2(net*settings.vat/100);
+     data.txns.push({id:'T'+String(++data.seq.txn).padStart(6,'0'),resId:r.id,date:addDays(ci,ri(0,nightsBetween(ci,maxD))),time:String(ri(8,21)).padStart(2,'0')+':'+String(ri(0,59)).padStart(2,'0'),type:'charge',dept,method:'',net,tax,amount:round2(net+tax),ref:'POS'+ri(1000,9999),note:pick(exNote[dept])})}
+    const f=folio(r);
+    if(status==='checked_out'){
+     const unpaid=src==='Corporate'&&co<addDays(T,-2)&&R()<.45;
+     if(!unpaid){if(R()<.35){const dep=Math.round(f.total*.3/10)*10;data.txns.push(mkPay(r.id,r.created,dep,meth()));data.txns.push(mkPay(r.id,co,f.total-dep,meth()))}else data.txns.push(mkPay(r.id,co,f.total,meth()))}
+    }else{const dep=Math.round(f.total*pick([.3,.5,1])/10)*10;data.txns.push(mkPay(r.id,ci,Math.min(dep,f.total),meth()))}
+   }else if(status==='confirmed'&&R()<.4){const f=folio(r);const d=addDays(ci,-ri(3,15));data.txns.push(mkPay(r.id,d>T?T:d,Math.round(f.total*.3/10)*10,meth()))}
+  }
+ });
+ rooms.forEach(rm=>{const dep=data.res.find(r=>r.roomId===rm.id&&r.status==='checked_out'&&r.checkOut===T);
+  if(dep&&R()<.7){rm.hk='dirty';rm.assignee=pick(['st4','st5','st6'])}else rm.hk=R()<.35?'inspected':'clean'});
+ const addEx=(date,cat,vendor,amount,method,note)=>{if(date<=T&&date>=addDays(T,-100))data.expenses.push({id:'e'+(data.expenses.length+1),date,category:cat,vendor,amount:Math.round(amount/10)*10,method,ref:'EXP'+ri(1000,9999),note:note||''})};
+ for(let m=-3;m<=0;m++){const d0=new Date(T.slice(0,7)+'-01T12:00:00');d0.setMonth(d0.getMonth()+m);const ym=iso(d0).slice(0,7),day=n=>ym+'-'+String(n).padStart(2,'0');
+  addEx(day(28),'Payroll','Staff payroll',ri(1600000,1800000),'Bank','Monthly payroll');
+  addEx(day(5),'Utilities','Kenya Power',ri(320000,420000),'Bank');addEx(day(8),'Utilities','Nairobi Water',ri(60000,90000),'Bank');
+  addEx(day(15),'Marketing & commissions','OTA commissions',ri(250000,450000),'Bank');
+  addEx(day(10),'Admin & licences','County licences and software',ri(80000,110000),'Bank');
+  addEx(day(15),'Tax remittance','VAT return payment',ri(700000,950000),'Bank');
+  [4,11,18,25].forEach(k=>{addEx(day(k),'Food & beverage cost','Produce and beverages supplier',ri(180000,260000),pick(['Bank','M-Pesa']));addEx(day(k+1),'Supplies & consumables','Housekeeping and guest supplies',ri(60000,110000),pick(['Bank','Cash']))});
+  addEx(day(12),'Repairs & maintenance','Contractors',ri(60000,200000),'Bank');addEx(day(22),'Repairs & maintenance','Spares and plumbing',ri(30000,90000),'Cash')}
+ data.tasks=[
+  {id:'w1',roomId:'rm106',area:'',title:'AC compressor not cooling',priority:'High',status:'In progress',assignee:'st7',created:addDays(T,-2),blocks:true,notes:'Replacement part ordered'},
+  {id:'w2',roomId:'rm305',area:'',title:'Bathroom leak under basin',priority:'Urgent',status:'Open',assignee:'st7',created:addDays(T,-1),blocks:true,notes:''},
+  {id:'w3',roomId:'rm203',area:'',title:'Replace TV remote',priority:'Low',status:'Open',assignee:'',created:addDays(T,-3),blocks:false,notes:''},
+  {id:'w4',roomId:null,area:'Lobby',title:'Replace lobby ceiling lights',priority:'Medium',status:'Open',assignee:'st7',created:addDays(T,-5),blocks:false,notes:''},
+  {id:'w5',roomId:'rm402',area:'',title:'Door lock battery change',priority:'Medium',status:'Done',assignee:'st7',created:addDays(T,-6),blocks:false,notes:''}];
+ data.gateway=data.txns.filter(t=>t.type==='payment'&&(t.method==='M-Pesa'||t.method==='Card')).slice(-8).map(t=>({id:uid('gw'),ts:t.date+' '+t.time,provider:t.method==='Card'?'Card gateway':'M-Pesa Daraja',event:t.method==='Card'?'charge.succeeded':'stk.success',ref:t.ref,amount:t.amount}));
+ return data;
+}
+
+/* ---------- persistence ---------- */
+function load(){try{const raw=localStorage.getItem(LS);if(raw){const d=JSON.parse(raw);if(d&&d.res){d.v=2;d.roomAvailability=d.roomAvailability||[];d.journalEntries=d.journalEntries||[];S=d;return}}}catch(e){}S=seed();save()}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+
+/* ---------- lookups and calculations ---------- */
+const room=id=>S.rooms.find(r=>r.id===id),guest=id=>S.guests.find(g=>g.id===id),resv=id=>S.res.find(r=>r.id===id);
+const typeOf=id=>S.types.find(t=>t.id===id),planOf=id=>S.plans.find(p=>p.id===id),staffOf=id=>S.staff.find(s=>s.id===id);
+const RS=['confirmed','checked_in','checked_out'];
+const nightsOf=r=>Math.max(0,nightsBetween(r.checkIn,r.checkOut));
+const vatOf=net=>round2(net*S.settings.vat/100);
+function folio(r){
+ const live=RS.includes(r.status),n=nightsOf(r);
+ const estimatedRoomNet=live?n*r.rate:0,estimatedRoomTax=vatOf(estimatedRoomNet);
+ const postedNights=(r.status==='checked_in'||r.status==='checked_out')?Math.max(0,Math.min(n,nightsBetween(r.checkIn,addDays(todayISO(),1)))):0;
+ const roomNet=postedNights*r.rate,roomTax=vatOf(roomNet);
+ const ch=S.txns.filter(t=>t.resId===r.id&&t.type==='charge');
+ const exNet=sum(ch,'net'),exTax=sum(ch,'tax');
+ const pays=S.txns.filter(t=>t.resId===r.id&&t.type==='payment'),rf=S.txns.filter(t=>t.resId===r.id&&t.type==='refund');
+ const paid=round2(sum(pays,'amount')-sum(rf,'amount'));
+ const total=round2(roomNet+roomTax+exNet+exTax),estimatedTotal=round2(estimatedRoomNet+estimatedRoomTax+exNet+exTax);
+ return{nights:n,postedNights,roomNet,roomTax,roomGross:round2(roomNet+roomTax),estimatedRoomNet,estimatedRoomTax,estimatedRoomGross:round2(estimatedRoomNet+estimatedRoomTax),exNet,exTax,exGross:round2(exNet+exTax),total,postedTotal:total,estimatedTotal,paid,balance:round2(total-paid),estimatedBalance:round2(estimatedTotal-paid),charges:ch,pays,rf};
+}
+function earnedTo(r,asAt){ // gross earned up to date (room nights <= asAt, extras <= asAt)
+ let g=0;if(r.status==='checked_in'||r.status==='checked_out'){for(let d=r.checkIn;d<r.checkOut&&d<=asAt&&d<=todayISO();d=addDays(d,1))g+=r.rate+vatOf(r.rate)}
+ return round2(g+sum(S.txns.filter(t=>t.resId===r.id&&t.type==='charge'&&t.date<=asAt),'amount'));
+}
+function paidTo(r,asAt){const p=S.txns.filter(t=>t.resId===r.id&&t.date<=asAt);return round2(sum(p.filter(t=>t.type==='payment'),'amount')-sum(p.filter(t=>t.type==='refund'),'amount'))}
+function ledger(from,to){
+ const T=todayISO(),rows=[];
+ S.res.forEach(r=>{
+  if(r.status!=='checked_in'&&r.status!=='checked_out')return;
+  if(r.checkOut<=from||r.checkIn>to)return;
+  const g=guest(r.guestId),rm=room(r.roomId),tax=vatOf(r.rate);
+  for(let d=r.checkIn;d<r.checkOut&&d<=T&&d<=to;d=addDays(d,1)){if(d<from)continue;
+   rows.push({id:r.code+'-'+d,date:d,time:'00:00',resId:r.id,code:r.code,guest:g?g.name:'',room:rm?rm.no:'',type:'charge',dept:'Rooms',method:'',net:r.rate,tax,amount:round2(r.rate+tax),ref:r.code+'-N'+d.slice(5),note:'Room night'})}
+ });
+ S.txns.forEach(t=>{if(t.date<from||t.date>to)return;const r=resv(t.resId),g=r&&guest(r.guestId),rm=r&&room(r.roomId);
+  rows.push(Object.assign({},t,{code:r?r.code:'',guest:g?g.name:'',room:rm?rm.no:''}))});
+ return rows.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+}
+function revenueBy(from,to){const rows=ledger(from,to).filter(x=>x.type==='charge'),by={};rows.forEach(x=>{by[x.dept]=(by[x.dept]||0)+x.net});return{by,net:sum(rows,'net'),tax:sum(rows,'tax'),gross:sum(rows,'amount'),rows}}
+function occOn(d){return S.res.filter(r=>RS.includes(r.status)&&r.checkIn<=d&&d<r.checkOut).length}
+function availabilityOn(roomId,d){const row=(S.roomAvailability||[]).find(x=>x.roomId===roomId&&x.date===d);return row?row.sellable:(d<todayISO()||!room(roomId).ooo)}
+function setAvailability(roomId,from,to,sellable,reason){for(let d=from;d<=to;d=addDays(d,1)){const old=S.roomAvailability.find(x=>x.roomId===roomId&&x.date===d);if(old)Object.assign(old,{sellable,reason:reason||''});else S.roomAvailability.push({roomId,date:d,sellable,reason:reason||''})}}
+function availOn(d){return S.rooms.filter(r=>availabilityOn(r.id,d)).length}
+function isFree(roomId,ci,co,except){return!S.res.some(r=>r.id!==except&&r.roomId===roomId&&(r.status==='confirmed'||r.status==='checked_in')&&r.checkIn<co&&ci<r.checkOut)}
+function freeRooms(ci,co,except){return S.rooms.filter(r=>{for(let d=ci;d<co;d=addDays(d,1))if(!availabilityOn(r.id,d))return false;return isFree(r.id,ci,co,except)})}
+const inhouse=rm=>S.res.find(r=>r.roomId===rm.id&&r.status==='checked_in');
+function roomState(rm){if(rm.ooo)return'ooo';if(inhouse(rm))return'occupied';return rm.hk==='dirty'?'dirty':(rm.hk==='inspected'?'inspected':'clean')}
+const STL={occupied:'Occupied',clean:'Vacant clean',inspected:'Inspected',dirty:'Vacant dirty',ooo:'Out of order'};
+function receivables(){const T=todayISO();return S.res.filter(r=>r.status!=='cancelled'&&r.status!=='no_show'||folio(r).exGross>0).map(r=>({r,f:folio(r)})).filter(x=>(x.r.status==='checked_out'||x.r.status==='checked_in')&&x.f.balance>0.5)}
+function cashAsAt(d){ // settlements, rather than authorisation, move clearing balances into bank
+ const acc={'Cash on hand':0,'M-Pesa float':0,'Card clearing':0,'Bank clearing':0,'Bank accounts':S.settings.openingCash};
+ const k=m=>m==='Cash'?'Cash on hand':m==='M-Pesa'?'M-Pesa float':m==='Card'?'Card clearing':m==='Bank'?'Bank accounts':'Bank clearing';
+ S.txns.forEach(t=>{if(t.date>d)return;if(t.type==='payment')acc[k(t.method)]+=t.amount;else if(t.type==='refund')acc[k(t.method)]-=t.amount});
+ S.expenses.forEach(e=>{if(e.date<=d)acc[k(e.method)]-=e.amount});
+ Object.keys(acc).forEach(x=>acc[x]=round2(acc[x]));return acc;
+}
+function balanceSheet(d){
+ const cash=cashAsAt(d);let ar=0,dep=0,outVat=0;
+ S.res.forEach(r=>{const e=earnedTo(r,d),p=paidTo(r,d);if(e>p)ar+=e-p;else dep+=p-e});
+ ledgerAll(d).forEach(x=>{if(x.type==='charge')outVat+=x.tax});
+ const remit=sum(S.expenses.filter(e=>e.category==='Tax remittance'&&e.date<=d),'amount');
+ const vatPay=round2(outVat-remit);
+ const pl=S.expenses.filter(e=>e.category!=='Tax remittance'&&e.date<=d);
+ const rev=ledgerAll(d).filter(x=>x.type==='charge');
+ const netRev=sum(rev,'net'),ex=sum(pl,'amount');
+ return{cash,ar:round2(ar),dep:round2(dep),vatPay,retained:round2(netRev-ex),opening:S.settings.openingCash,stock:sum(S.inventory,x=>x.qty*x.cost)};
+}
+function ledgerAll(d){const first=S.res.reduce((m,r)=>r.checkIn<m?r.checkIn:m,'9999-99-99');const t0=S.txns.reduce((m,t)=>t.date<m?t.date:m,first);return ledger(first<t0?first:t0,d)}
+function dayStats(from,to){const out=[];const led=ledger(from,to).filter(x=>x.type==='charge');
+ for(let d=from;d<=to;d=addDays(d,1)){const rows=led.filter(x=>x.date===d),rr=rows.filter(x=>x.dept==='Rooms'),sold=occOn(d),av=availOn(d)||1;
+  out.push({date:d,avail:av,sold,occ:sold/av,roomRev:sum(rr,'net'),total:sum(rows,'net'),adr:rr.length?sum(rr,'net')/rr.length:0,revpar:sum(rr,'net')/av,other:sum(rows,'net')-sum(rr,'net')})}
+ return out}
+window.__H={get S(){return S},set S(v){S=v},load,save,seed,$,esc,round2,sum,iso,todayISO,addDays,nightsBetween,nowTime,fmtD,fmtS,dow,isWk,uid,rng,LS,cur,money,money2,short,pct,room,guest,resv,typeOf,planOf,staffOf,RS,nightsOf,vatOf,folio,earnedTo,paidTo,ledger,revenueBy,occOn,availOn,isFree,freeRooms,inhouse,roomState,STL,receivables,cashAsAt,balanceSheet,ledgerAll,dayStats};
+})();
+(function(){
+'use strict';
+const H=window.__H;
+const {$,esc,round2,sum,iso,todayISO,addDays,nightsBetween,nowTime,fmtD,fmtS,dow,isWk,uid,money,money2,short,pct,room,guest,resv,typeOf,planOf,staffOf,RS,nightsOf,vatOf,folio,ledger,revenueBy,occOn,availOn,isFree,freeRooms,inhouse,roomState,STL,receivables,cashAsAt,balanceSheet,dayStats,earnedTo,paidTo,ledgerAll,load,save,LS}=H;
+let S=null;const syncS=()=>{S=H.S};
+const V={},A={},IN={},CH={};
+const PAL=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)'];
+const DEPT_COL={Rooms:'var(--c1)','F&B':'var(--c2)',Spa:'var(--c4)',Laundry:'var(--c3)',Minibar:'var(--c5)',Transport:'var(--c6)',Other:'var(--mut)'};
+const DEPTS=['Rooms','F&B','Spa','Laundry','Minibar','Transport','Other'];
+const EXP_CATS=['Payroll','Utilities','Supplies & consumables','Food & beverage cost','Repairs & maintenance','Marketing & commissions','Admin & licences','Tax remittance'];
+const METHODS=['Cash','M-Pesa','Card','Bank'];
+const ui={view:'dashboard',tapeStart:addDays(todayISO(),-2),tapeDays:14,q:'',status:'all',source:'all',limit:50,range:{preset:'month',from:todayISO().slice(0,8)+'01',to:todayISO()},stmt:'income',rpt:'transactions',gq:'',hk:'all',wo:'all',cashTab:'out',expCat:'all',rmType:'all',rmFloor:'all',rmState:'all',txType:'all',txQ:'',pos:{resId:'',cart:{}},setTab:'property',navOpen:false};
+function setPreset(p){const T=todayISO();let f=T,t=T;
+ if(p==='7d')f=addDays(T,-6);else if(p==='30d')f=addDays(T,-29);else if(p==='month')f=T.slice(0,8)+'01';
+ else if(p==='last'){const d=new Date(T.slice(0,7)+'-01T12:00:00');d.setMonth(d.getMonth()-1);f=iso(d);const e=new Date(T.slice(0,7)+'-01T12:00:00');e.setDate(0);t=iso(e)}
+ else if(p==='ytd')f=T.slice(0,4)+'-01-01';
+ ui.range={preset:p,from:f,to:t}}
+
+/* ---------- small html helpers ---------- */
+const opt=(o,val)=>{const a=Array.isArray(o)?o:[o,o];return `<option value="${esc(a[0])}"${String(a[0])===String(val)?' selected':''}>${esc(a[1])}</option>`};
+const sel=(id,opts,val,attrs='')=>`<select id="${id}" ${attrs}>${opts.map(o=>opt(o,val)).join('')}</select>`;
+const inp=(id,val,attrs='')=>`<input id="${id}" value="${esc(val==null?'':val)}" ${attrs}>`;
+const fld=(label,inner,cls='')=>`<label class="fld ${cls}"><span>${esc(label)}</span>${inner}</label>`;
+const gv=id=>{const e=document.getElementById(id);return e?e.value:''};
+const gn=id=>parseFloat(gv(id))||0;
+const empty=m=>`<div class="empty">${m}</div>`;
+const RSL={confirmed:['Confirmed','brand'],checked_in:['In house','occ'],checked_out:['Checked out','ok'],cancelled:['Cancelled','bad'],no_show:['No-show','warn']};
+const rsChip=s=>`<span class="chip ${RSL[s][1]}">${RSL[s][0]}</span>`;
+const roomChip=st=>`<span class="chip ${({occupied:'occ',clean:'ok',inspected:'ok',dirty:'warn',ooo:'bad'})[st]}">${STL[st]}</span>`;
+const ICON={dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',desk:'<path d="M4 18h16"/><path d="M6 18a6 6 0 0 1 12 0"/><path d="M12 8v4M10 8h4"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.8c2 .6 3.2 2.3 3.5 5.2"/>',bed:'<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.5"/>',broom:'<path d="M14 3l7 7"/><path d="M12 8l4 4-6 8H4l3-4z"/>',wrench:'<path d="M14.5 6.5a4 4 0 0 0-5 5L3 18l3 3 6.5-6.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/>',box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',badge:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6"/>',wallet:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>',receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',chart:'<path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/>',report:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
+const NAV=[['Overview',[['dashboard','Dashboard','dash']]],['Front desk',[['frontdesk','Front desk','desk'],['reservations','Reservations','list'],['tape','Room rack','cal'],['guests','Guests','users']]],['Property',[['rooms','Rooms and rates','bed'],['housekeeping','Housekeeping','broom'],['maintenance','Maintenance','wrench'],['inventory','Inventory','box'],['staff','Staff','badge']]],['Sales',[['pos','Point of sale','cart']]],['Finance',[['cashier','Cashier and folios','wallet'],['expenses','Expenses','receipt'],['statements','Financial statements','chart']]],['Reports',[['reports','Reports','report']]],['System',[['settings','Settings','gear']]]];
+function navHtml(){const T=todayISO();
+ const badge={frontdesk:S.res.filter(r=>(r.status==='confirmed'&&r.checkIn<=T)||(r.status==='checked_in'&&r.checkOut<=T)).length,housekeeping:S.rooms.filter(r=>roomState(r)==='dirty').length,maintenance:S.tasks.filter(t=>t.status!=='Done').length};
+ return NAV.map(([g,items])=>`<div class="ng">${g}</div>`+items.map(([k,l,ic])=>`<button class="ni" data-act="go" data-v="${k}" ${ui.view===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[ic]}</svg>${l}${badge[k]?`<span class="n">${badge[k]}</span>`:''}</button>`).join('')).join('')}
+
+/* ---------- charts ---------- */
+const niceMax=v=>{const p=Math.pow(10,Math.floor(Math.log10(v)));const m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p};
+function barChart(labels,series,o={}){
+ const W=640,Ht=o.h||220,pl=44,pr=8,pt=10,pb=24,n=labels.length;
+ const totals=labels.map((_,i)=>series.reduce((a,s)=>a+s.values[i],0)),max=niceMax(Math.max(...totals,1)),bw=(W-pl-pr)/n,step=Math.ceil(n/8);
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(o.label||'Bar chart')}">`;
+ for(let i=0;i<=4;i++){const y=pt+(Ht-pt-pb)*(1-i/4);s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text class="ax" x="${pl-6}" y="${y+3.5}" text-anchor="end">${short(max*i/4)}</text>`}
+ labels.forEach((l,i)=>{let y=Ht-pb;series.forEach(se=>{const h=(Ht-pt-pb)*se.values[i]/max;y-=h;s+=`<rect x="${pl+i*bw+bw*.16}" y="${y}" width="${bw*.68}" height="${Math.max(h,0)}" fill="${se.color}" rx="2"><title>${esc(l)} · ${esc(se.name)}: ${money(se.values[i])}</title></rect>`});
+  if(i%step===0)s+=`<text class="ax" x="${pl+i*bw+bw/2}" y="${Ht-7}" text-anchor="middle">${esc(l)}</text>`});
+ return s+'</svg>'}
+function lineChart(labels,vals,o={}){
+ const W=640,Ht=o.h||200,pl=40,pr=10,pt=10,pb=24,n=vals.length,max=o.max||niceMax(Math.max(...vals,1));
+ const x=i=>pl+(W-pl-pr)*(n===1?.5:i/(n-1)),y=v=>pt+(Ht-pt-pb)*(1-v/max),col=o.color||'var(--c1)',f=o.fmt||short;
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${Ht}" role="img" aria-label="${esc(o.label||'Line chart')}">`;
+ for(let i=0;i<=4;i++){const yy=pt+(Ht-pt-pb)*(1-i/4);s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}"/><text class="ax" x="${pl-6}" y="${yy+3.5}" text-anchor="end">${f(max*i/4)}</text>`}
+ const pts=vals.map((v,i)=>x(i)+','+y(v)).join(' ');
+ s+=`<polygon points="${x(0)},${Ht-pb} ${pts} ${x(n-1)},${Ht-pb}" fill="${col}" opacity=".13"/><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>`;
+ if(o.todayIdx!=null&&o.todayIdx>=0)s+=`<line x1="${x(o.todayIdx)}" x2="${x(o.todayIdx)}" y1="${pt}" y2="${Ht-pb}" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="4 3"/><text class="ax" style="fill:var(--brass)" x="${x(o.todayIdx)+4}" y="${pt+9}">Today</text>`;
+ vals.forEach((v,i)=>{s+=`<circle cx="${x(i)}" cy="${y(v)}" r="6" fill="transparent"><title>${esc(labels[i])}: ${f(v)}</title></circle>`});
+ const step=Math.ceil(n/7);labels.forEach((l,i)=>{if(i%step===0)s+=`<text class="ax" x="${x(i)}" y="${Ht-7}" text-anchor="middle">${esc(l)}</text>`});
+ return s+'</svg>'}
+function donut(items,o={}){
+ const tot=sum(items,'value')||1,r=54,C=2*Math.PI*r;let off=0;
+ let s=`<svg viewBox="0 0 150 150" role="img" aria-label="${esc(o.label||'Share chart')}"><g transform="rotate(-90 75 75)">`;
+ items.forEach(it=>{const len=C*it.value/tot;s+=`<circle cx="75" cy="75" r="${r}" fill="none" stroke="${it.color}" stroke-width="22" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"><title>${esc(it.label)}: ${money(it.value)}</title></circle>`;off+=len});
+ s+=`</g><text x="75" y="73" text-anchor="middle" style="font:700 16px 'Bricolage Grotesque',sans-serif;fill:var(--ink)">${short(tot)}</text><text x="75" y="89" text-anchor="middle" style="font-size:10.5px;fill:var(--mut)">${esc(o.center||'')}</text></svg>`;
+ return `<div class="donut">${s}<div class="legend" style="flex-direction:column;gap:6px">${items.map(it=>`<span><i style="background:${it.color}"></i>${esc(it.label)} <b>${pct(it.value/tot)}</b></span>`).join('')}</div></div>`}
+const hbars=(items,fmt)=>{fmt=fmt||money;const m=Math.max(...items.map(i=>i.value),1);return items.length?items.map(i=>`<div class="hb"><span>${esc(i.label)}</span><div class="b"><i style="width:${i.value/m*100}%;background:${i.color||'var(--c1)'}"></i></div><b class="num">${fmt(i.value)}</b></div>`).join(''):empty('No data in this period')};
+const kpi=(l,v,s)=>`<div class="kpi"><small>${l}</small><b>${v}</b>${s?`<span>${s}</span>`:''}</div>`;
+const rangeBar=()=>`<div class="bar-top"><div class="seg" role="group" aria-label="Period">${[['today','Today'],['7d','7 days'],['30d','30 days'],['month','This month'],['last','Last month'],['ytd','Year to date']].map(([k,l])=>`<button data-act="preset" data-p="${k}" aria-pressed="${ui.range.preset===k}">${l}</button>`).join('')}</div><input class="inp sm" type="date" id="rf" value="${ui.range.from}" data-ch="range" aria-label="From date"><span class="muted">to</span><input class="inp sm" type="date" id="rt" value="${ui.range.to}" data-ch="range" aria-label="To date"></div>`;
+const tabs=(cur,list,act)=>`<div class="tabs" role="tablist">${list.map(([k,l])=>`<button class="tab" role="tab" data-act="${act}" data-k="${k}" aria-selected="${cur===k}">${l}</button>`).join('')}</div>`;
+const csvBtn=(what)=>`<button class="btn sm" data-act="csv" data-what="${what}">Download CSV</button>`;
+
+/* ---------- dashboard ---------- */
+V.dashboard=()=>{
+ const T=todayISO(),f30=addDays(T,-29),ms=T.slice(0,8)+'01',from=ms<f30?ms:f30;
+ const sellable=S.rooms.filter(r=>!r.ooo).length||1;
+ const inh=S.res.filter(r=>r.status==='checked_in');
+ const arr=S.res.filter(r=>r.status==='confirmed'&&r.checkIn<=T),dep=inh.filter(r=>r.checkOut<=T);
+ const led=ledger(from,T),ch=led.filter(x=>x.type==='charge'),in30=ch.filter(x=>x.date>=f30),rooms30=in30.filter(x=>x.dept==='Rooms');
+ const roomRev=sum(rooms30,'net'),adr=rooms30.length?roomRev/rooms30.length:0,revpar=roomRev/(S.rooms.length*30);
+ const revToday=sum(ch.filter(x=>x.date===T),'net'),revMtd=sum(ch.filter(x=>x.date>=ms),'net');
+ const collected=sum(led.filter(x=>x.date===T&&x.type==='payment'),'amount')-sum(led.filter(x=>x.date===T&&x.type==='refund'),'amount');
+ const ar=receivables(),arTot=sum(ar,x=>x.f.balance);
+ const st={occupied:0,clean:0,inspected:0,dirty:0,ooo:0};S.rooms.forEach(r=>st[roomState(r)]++);
+ const occ=st.occupied/sellable;
+ const d14=[];for(let i=13;i>=0;i--)d14.push(addDays(T,-i));
+ const roomsD=d14.map(d=>sum(ch.filter(x=>x.date===d&&x.dept==='Rooms'),'net')),otherD=d14.map(d=>sum(ch.filter(x=>x.date===d&&x.dept!=='Rooms'),'net'));
+ const o28=[],l28=[];for(let i=-13;i<=14;i++){const d=addDays(T,i);l28.push(fmtS(d));o28.push(Math.round(occOn(d)/(availOn(d)||1)*100))}
+ const byDept={};in30.forEach(x=>byDept[x.dept]=(byDept[x.dept]||0)+x.net);
+ const dn=DEPTS.filter(d=>byDept[d]).map(d=>({label:d,value:byDept[d],color:DEPT_COL[d]}));
+ const byM={};led.filter(x=>x.type==='payment'&&x.date>=f30).forEach(x=>byM[x.method]=(byM[x.method]||0)+x.amount);
+ const mb=Object.keys(byM).map((m,i)=>({label:m,value:byM[m],color:PAL[i%6]})).sort((a,b)=>b.value-a.value);
+ const bySrc={};S.res.filter(r=>RS.includes(r.status)&&r.checkIn>=f30&&r.checkIn<=T).forEach(r=>bySrc[r.source]=(bySrc[r.source]||0)+1);
+ const sb=Object.keys(bySrc).map((m,i)=>({label:m,value:bySrc[m],color:PAL[(i+2)%6]})).sort((a,b)=>b.value-a.value);
+ const wo=S.tasks.filter(t=>t.status!=='Done').slice(0,5),low=S.inventory.filter(i=>i.qty<=i.reorder).slice(0,5);
+ const segs=[['occupied','var(--occ)'],['inspected','var(--ok)'],['clean','color-mix(in srgb,var(--ok) 55%,var(--sf))'],['dirty','var(--warn)'],['ooo','var(--bad)']];
+ const pr=(r,k)=>{const g=guest(r.guestId),rm=room(r.roomId);return `<div class="li"><span class="rn">${esc(rm.no)}</span><div style="flex:1;min-width:0"><div class="bold">${esc(g.name)}</div><div class="small muted">${k==='a'?nightsOf(r)+' night'+(nightsOf(r)>1?'s':'')+' · '+esc(r.source):'Balance '+money(folio(r).balance)}</div></div><button class="btn sm" data-act="${k==='a'?'checkin':'checkout'}" data-id="${r.id}">${k==='a'?'Check in':'Check out'}</button></div>`};
+ return `<div class="hero">
+ <div class="card"><div class="small muted">Occupancy today</div><div class="occ-big">${pct(occ)}</div>
+  <div class="strip" role="img" aria-label="Room status mix">${segs.map(([k,c])=>st[k]?`<i style="width:${st[k]/S.rooms.length*100}%;background:${c}" title="${STL[k]}: ${st[k]}"></i>`:'').join('')}</div>
+  <div class="legend">${segs.map(([k,c])=>`<span><i style="background:${c}"></i>${STL[k]} <b>${st[k]}</b></span>`).join('')}</div></div>
+ <div class="kpis">
+  ${kpi('Arrivals due',arr.length,'in house '+inh.length+' · leaving '+dep.length)}
+  ${kpi('Revenue today',money(revToday),'excl. tax')}
+  ${kpi('Revenue this month',money(revMtd),'excl. tax')}
+  ${kpi('ADR, 30 days',money(adr),'average daily rate')}
+  ${kpi('RevPAR, 30 days',money(revpar),'revenue per available room')}
+  ${kpi('Collected today',money(collected),'outstanding '+money(arTot))}
+ </div></div>
+ <div class="g2 mt"><div class="card"><div class="hd"><h3>Revenue, last 14 days</h3><span class="legend" style="margin-left:auto"><span><i style="background:var(--c1)"></i>Rooms</span><span><i style="background:var(--c2)"></i>Other</span></span></div>${barChart(d14.map(fmtS),[{name:'Rooms',color:'var(--c1)',values:roomsD},{name:'Other',color:'var(--c2)',values:otherD}],{label:'Daily revenue for the last 14 days'})}</div>
+ <div class="card"><h3>Occupancy, 2 weeks back and ahead</h3>${lineChart(l28,o28,{max:100,fmt:v=>Math.round(v)+'%',todayIdx:13,color:'var(--c3)',label:'Occupancy percentage by date'})}</div></div>
+ <div class="g3 mt"><div class="card"><h3>Revenue mix, 30 days</h3>${dn.length?donut(dn,{center:'net'}):empty('No revenue yet')}</div>
+  <div class="card"><h3>Payments by method, 30 days</h3>${hbars(mb)}</div>
+  <div class="card"><h3>Bookings by source, 30 days</h3>${hbars(sb,v=>v)}</div></div>
+ <div class="g3 mt"><div class="card"><div class="hd"><h3>Arrivals waiting</h3></div><div class="list">${arr.length?arr.slice(0,5).map(r=>pr(r,'a')).join(''):empty('No arrivals waiting')}</div></div>
+  <div class="card"><div class="hd"><h3>Departures due</h3></div><div class="list">${dep.length?dep.slice(0,5).map(r=>pr(r,'d')).join(''):empty('No departures due')}</div></div>
+  <div class="card"><div class="hd"><h3>Needs attention</h3></div><div class="list">${wo.map(t=>`<div class="li"><span class="chip ${t.priority==='Urgent'||t.priority==='High'?'bad':'warn'}">${t.priority}</span><div style="flex:1">${esc(t.title)}<div class="small muted">${t.roomId?'Room '+esc(room(t.roomId).no):esc(t.area)}</div></div></div>`).join('')}${low.map(i=>`<div class="li"><span class="chip warn">Low stock</span><div style="flex:1">${esc(i.name)}<div class="small muted">${i.qty} ${esc(i.unit)} left, reorder at ${i.reorder}</div></div></div>`).join('')}${!wo.length&&!low.length?empty('Nothing needs attention'):''}</div></div></div>`};
+
+/* ---------- front desk ---------- */
+V.frontdesk=()=>{
+ const T=todayISO(),arr=S.res.filter(r=>r.status==='confirmed'&&r.checkIn<=T).sort((a,b)=>a.checkIn.localeCompare(b.checkIn));
+ const inh=S.res.filter(r=>r.status==='checked_in').sort((a,b)=>room(a.roomId).no.localeCompare(room(b.roomId).no));
+ const dep=inh.filter(r=>r.checkOut<=T);
+ const row=(r,k)=>{const g=guest(r.guestId),rm=room(r.roomId),f=folio(r),late=k==='a'&&r.checkIn<T;
+  return `<div class="li"><span class="rn">${esc(rm.no)}</span><div style="flex:1;min-width:0"><div class="bold">${esc(g.name)}${g.vip?' <span class="chip brand">VIP</span>':''}${late?' <span class="chip warn">Overdue</span>':''}</div><div class="small muted">${fmtS(r.checkIn)} to ${fmtS(r.checkOut)} · ${r.adults+r.children} guest${r.adults+r.children>1?'s':''} · ${f.balance>0.5?'Balance '+money(f.balance):'Settled'}</div></div>
+  <div class="row"><button class="btn sm" data-act="openRes" data-id="${r.id}">Folio</button>${k==='a'?`<button class="btn sm pri" data-act="checkin" data-id="${r.id}">Check in</button>`:(r.checkOut<=T?`<button class="btn sm pri" data-act="checkout" data-id="${r.id}">Check out</button>`:'')}</div></div>`};
+ return `<div class="bar-top"><button class="btn pri" data-act="walkin">Walk-in booking</button><span class="muted">Business date ${fmtD(T)}</span></div>
+ <div class="g3"><div class="card"><div class="hd"><h3>Arrivals</h3><span class="chip brand">${arr.length}</span></div><div class="list">${arr.length?arr.map(r=>row(r,'a')).join(''):empty('No arrivals waiting')}</div></div>
+ <div class="card"><div class="hd"><h3>In house</h3><span class="chip occ">${inh.length}</span></div><div class="list">${inh.length?inh.map(r=>row(r,'h')).join(''):empty('No guests in house')}</div></div>
+ <div class="card"><div class="hd"><h3>Departures due</h3><span class="chip warn">${dep.length}</span></div><div class="list">${dep.length?dep.map(r=>row(r,'d')).join(''):empty('No departures due')}</div></div></div>`};
+
+/* ---------- reservations ---------- */
+V.reservations=()=>{
+ const q=ui.q.toLowerCase();
+ let list=S.res.filter(r=>(ui.status==='all'||r.status===ui.status)&&(ui.source==='all'||r.source===ui.source));
+ if(q)list=list.filter(r=>{const g=guest(r.guestId),rm=room(r.roomId);return(r.code+' '+(g?g.name:'')+' '+(rm?rm.no:'')+' '+(g?g.phone:'')).toLowerCase().includes(q)});
+ list.sort((a,b)=>b.checkIn.localeCompare(a.checkIn));
+ const shown=list.slice(0,ui.limit);
+ return `<div class="bar-top"><input class="inp sm" style="width:240px" id="q" data-in="q" placeholder="Search code, guest, phone or room" value="${esc(ui.q)}" aria-label="Search reservations">
+ ${sel('fs',[['all','All statuses'],...Object.keys(RSL).map(k=>[k,RSL[k][0]])],ui.status,'class="inp sm" data-ch="fs"')}
+ ${sel('fsrc',[['all','All sources'],...S.settings.sources],ui.source,'class="inp sm" data-ch="fsrc"')}
+ <span class="muted small">${list.length} reservation${list.length===1?'':'s'}</span><div class="grow"></div>${csvBtn('reservations')}<button class="btn pri" data-act="newBooking">New booking</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Code</th><th>Guest</th><th>Room</th><th>Stay</th><th class="num">Nights</th><th>Status</th><th>Source</th><th class="num">Total</th><th class="num">Balance</th></tr></thead><tbody>
+ ${shown.map(r=>{const g=guest(r.guestId),rm=room(r.roomId),f=folio(r);return `<tr class="click" data-act="openRes" data-id="${r.id}"><td class="bold">${r.code}</td><td>${esc(g.name)}</td><td>${esc(rm.no)}</td><td>${fmtS(r.checkIn)} to ${fmtS(r.checkOut)}</td><td class="num">${f.nights}</td><td>${rsChip(r.status)}</td><td>${esc(r.source)}</td><td class="num">${money(f.total)}</td><td class="num">${f.balance>0.5?`<span class="chip warn">${money(f.balance)}</span>`:'<span class="muted">0</span>'}</td></tr>`}).join('')||`<tr><td colspan="9">${empty('No reservations match. Try clearing the filters.')}</td></tr>`}
+ </tbody></table></div></div>${list.length>shown.length?`<div class="row mt"><button class="btn" data-act="more">Show more</button><span class="muted small">Showing ${shown.length} of ${list.length}</span></div>`:''}`};
+
+/* ---------- room rack (tape chart) ---------- */
+V.tape=()=>{
+ const n=ui.tapeDays,start=ui.tapeStart,T=todayISO(),days=[];for(let i=0;i<n;i++)days.push(addDays(start,i));
+ const head=`<div class="tr head"><div class="tl"><b>Room</b></div><div class="tg" style="--n:${n}">${days.map((d,i)=>`<div class="th${d===T?' td':''}" style="grid-column:${i+1};grid-row:1"><span>${dow(d)}</span><b>${fmtS(d)}</b></div>`).join('')}</div></div>`;
+ const rows=S.rooms.map(rm=>{const ty=typeOf(rm.typeId);
+  const cells=days.map((d,i)=>`<button class="tc${isWk(d)?' wk':''}${d===T?' td':''}" style="grid-column:${i+1};grid-row:1" data-act="tapeNew" data-room="${rm.id}" data-date="${d}" aria-label="New booking, room ${rm.no}, ${d}"></button>`).join('');
+  const bars=S.res.filter(r=>r.roomId===rm.id&&RS.includes(r.status)&&r.checkIn<addDays(start,n)&&r.checkOut>start).map(r=>{const a=Math.max(0,nightsBetween(start,r.checkIn)),b=Math.min(n,nightsBetween(start,r.checkOut)),g=guest(r.guestId);
+   return `<button class="rb ${r.status}" style="grid-column:${a+1}/${b+1};grid-row:1" data-act="openRes" data-id="${r.id}" title="${esc(g.name)} · ${r.code}">${esc(g.name)}</button>`}).join('');
+  const ooo=rm.ooo?`<div class="rb ooo" style="grid-column:1/${n+1};grid-row:1">Out of order: ${esc(rm.oooReason||'maintenance')}</div>`:'';
+  return `<div class="tr"><div class="tl"><b>${rm.no}</b><small>${esc(ty.name)}</small></div><div class="tg" style="--n:${n}">${cells}${bars}${ooo}</div></div>`}).join('');
+ return `<div class="bar-top"><button class="btn" data-act="tapeMove" data-d="-7" aria-label="Back one week">Back</button><button class="btn" data-act="tapeToday">Today</button><button class="btn" data-act="tapeMove" data-d="7" aria-label="Forward one week">Forward</button>
+ <div class="seg" role="group" aria-label="Days shown">${[7,14,21,30].map(k=>`<button data-act="tapeDays" data-n="${k}" aria-pressed="${ui.tapeDays===k}">${k} days</button>`).join('')}</div>
+ <span class="legend"><span><i style="background:var(--brandbg);box-shadow:inset 3px 0 0 var(--brand)"></i>Confirmed</span><span><i style="background:var(--occ)"></i>In house</span><span><i style="background:var(--sf2);border:1px solid var(--line)"></i>Checked out</span></span>
+ <span class="muted small">Click an empty night to book it, or a bar to open the folio.</span></div><div class="tape">${head}${rows}</div>`};
+
+/* ---------- guests ---------- */
+V.guests=()=>{
+ const q=ui.gq.toLowerCase(),spend={},stays={};
+ S.res.forEach(r=>{if(r.status==='checked_in'||r.status==='checked_out'){stays[r.guestId]=(stays[r.guestId]||0)+1;spend[r.guestId]=(spend[r.guestId]||0)+folio(r).total}});
+ const list=S.guests.filter(g=>!q||(g.name+' '+g.phone+' '+g.email+' '+g.company+' '+g.idNo).toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+ return `<div class="bar-top"><input class="inp sm" style="width:260px" id="gq" data-in="gq" placeholder="Search name, phone, email or company" value="${esc(ui.gq)}" aria-label="Search guests"><span class="muted small">${list.length} guests</span><div class="grow"></div>${csvBtn('guests')}<button class="btn pri" data-act="guestNew">Add guest</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Company</th><th>Nationality</th><th class="num">Stays</th><th class="num">Lifetime spend</th></tr></thead><tbody>
+ ${list.slice(0,150).map(g=>`<tr class="click" data-act="guestOpen" data-id="${g.id}"><td class="bold">${esc(g.name)}${g.vip?' <span class="chip brand">VIP</span>':''}</td><td>${esc(g.phone)}</td><td>${esc(g.email)}</td><td>${esc(g.company)}</td><td>${esc(g.nationality)}</td><td class="num">${stays[g.id]||0}</td><td class="num">${money(spend[g.id]||0)}</td></tr>`).join('')||`<tr><td colspan="7">${empty('No guests match your search.')}</td></tr>`}</tbody></table></div></div>`};
+
+/* ---------- rooms and rates ---------- */
+V.rooms=()=>{
+ let list=S.rooms.filter(r=>(ui.rmType==='all'||r.typeId===ui.rmType)&&(ui.rmFloor==='all'||String(r.floor)===ui.rmFloor)&&(ui.rmState==='all'||roomState(r)===ui.rmState));
+ const floors=[...new Set(S.rooms.map(r=>r.floor))].sort();
+ return `<div class="card"><div class="hd"><h3>Room types and base rates</h3><div class="grow"></div><button class="btn sm" data-act="typeNew">Add room type</button></div><div class="tw"><table class="t"><thead><tr><th>Type</th><th>Code</th><th class="num">Base rate</th><th class="num">Rate with tax</th><th class="num">Sleeps</th><th>Beds</th><th>Amenities</th><th class="num">Rooms</th><th></th></tr></thead><tbody>
+ ${S.types.map(t=>`<tr><td class="bold">${esc(t.name)}</td><td>${esc(t.code)}</td><td class="num">${money(t.rate)}</td><td class="num">${money(t.rate+vatOf(t.rate))}</td><td class="num">${t.cap}</td><td>${esc(t.beds)}</td><td class="small muted">${esc(t.amen)}</td><td class="num">${S.rooms.filter(r=>r.typeId===t.id).length}</td><td><button class="btn sm" data-act="typeEdit" data-id="${t.id}">Edit</button></td></tr>`).join('')}</tbody></table></div></div>
+ <div class="bar-top mt">${sel('rt',[['all','All types'],...S.types.map(t=>[t.id,t.name])],ui.rmType,'class="inp sm" data-ch="rmType"')}${sel('rfl',[['all','All floors'],...floors.map(f=>[String(f),'Floor '+f])],ui.rmFloor,'class="inp sm" data-ch="rmFloor"')}${sel('rst',[['all','Any status'],...Object.keys(STL).map(k=>[k,STL[k]])],ui.rmState,'class="inp sm" data-ch="rmState"')}<span class="muted small">${list.length} rooms</span><div class="grow"></div><button class="btn pri" data-act="roomNew">Add room</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Room</th><th>Floor</th><th>Type</th><th>Status</th><th>Current guest</th><th>Next arrival</th><th></th></tr></thead><tbody>
+ ${list.map(rm=>{const ih=inhouse(rm),nx=S.res.filter(r=>r.roomId===rm.id&&r.status==='confirmed'&&r.checkIn>=todayISO()).sort((a,b)=>a.checkIn.localeCompare(b.checkIn))[0];
+  return `<tr><td class="bold">${rm.no}</td><td>${rm.floor}</td><td>${esc(typeOf(rm.typeId).name)}</td><td>${roomChip(roomState(rm))}${rm.ooo?` <span class="small muted">${esc(rm.oooReason)}</span>`:''}</td><td>${ih?esc(guest(ih.guestId).name):'<span class="muted">Vacant</span>'}</td><td>${nx?fmtS(nx.checkIn)+' · '+esc(guest(nx.guestId).name):'<span class="muted">None booked</span>'}</td><td class="row"><button class="btn sm" data-act="roomEdit" data-id="${rm.id}">Edit</button><button class="btn sm" data-act="roomOoo" data-id="${rm.id}">${rm.ooo?'Return to service':'Take out of order'}</button></td></tr>`}).join('')||`<tr><td colspan="7">${empty('No rooms match the filters.')}</td></tr>`}</tbody></table></div></div>`};
+
+/* ---------- housekeeping ---------- */
+V.housekeeping=()=>{
+ const st={};S.rooms.forEach(r=>{const k=roomState(r);st[k]=(st[k]||0)+1});
+ const hkStaff=S.staff.filter(s=>s.role==='Housekeeping'&&s.active);
+ const list=S.rooms.filter(r=>ui.hk==='all'||roomState(r)===ui.hk);
+ const floors=[...new Set(list.map(r=>r.floor))].sort();
+ return `<div class="bar-top"><div class="seg" role="group" aria-label="Filter rooms">${[['all','All'],['dirty','Dirty'],['clean','Clean'],['inspected','Inspected'],['occupied','Occupied'],['ooo','Out of order']].map(([k,l])=>`<button data-act="hkFilter" data-k="${k}" aria-pressed="${ui.hk===k}">${l}${k!=='all'?' '+(st[k]||0):''}</button>`).join('')}</div><div class="grow"></div><button class="btn" data-act="hkAssign">Auto-assign dirty rooms</button></div>
+ ${floors.map(fl=>`<h3 class="mt" style="margin-bottom:8px">Floor ${fl}</h3><div class="rooms">${list.filter(r=>r.floor===fl).map(rm=>{const s=roomState(rm),ih=inhouse(rm);
+  return `<div class="rc ${s}"><div class="row"><span class="rn">${rm.no}</span><div class="grow"></div>${roomChip(s)}</div><div class="small muted">${esc(typeOf(rm.typeId).name)}${ih?' · '+esc(guest(ih.guestId).name):''}</div>
+  ${s!=='ooo'?`<div class="mt" style="margin-top:10px">${sel('as_'+rm.id,[['','Unassigned'],...hkStaff.map(x=>[x.id,x.name])],rm.assignee,'class="inp sm" style="width:100%" data-ch="hkAssignee" data-id="'+rm.id+'" aria-label="Assign room '+rm.no+'"')}</div>
+  <div class="row" style="margin-top:8px">${rm.hk==='dirty'?`<button class="btn sm pri" data-act="hkSet" data-id="${rm.id}" data-s="clean">Mark clean</button>`:''}${rm.hk==='clean'&&!ih?`<button class="btn sm pri" data-act="hkSet" data-id="${rm.id}" data-s="inspected">Inspected</button>`:''}${rm.hk!=='dirty'?`<button class="btn sm" data-act="hkSet" data-id="${rm.id}" data-s="dirty">Mark dirty</button>`:''}</div>`:`<div class="small" style="margin-top:10px;color:var(--bad)">${esc(rm.oooReason||'Under maintenance')}</div>`}</div>`}).join('')}</div>`).join('')||empty('No rooms in this view')}`};
+
+/* ---------- maintenance ---------- */
+V.maintenance=()=>{
+ const list=S.tasks.filter(t=>ui.wo==='all'||t.status===ui.wo).sort((a,b)=>({Open:0,'In progress':1,Done:2}[a.status]-{Open:0,'In progress':1,Done:2}[b.status])||b.created.localeCompare(a.created));
+ const pc={Urgent:'bad',High:'bad',Medium:'warn',Low:''};
+ return `<div class="bar-top"><div class="seg" role="group" aria-label="Filter work orders">${['all','Open','In progress','Done'].map(k=>`<button data-act="woFilter" data-k="${k}" aria-pressed="${ui.wo===k}">${k==='all'?'All':k}</button>`).join('')}</div><div class="grow"></div><button class="btn pri" data-act="woNew">New work order</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Priority</th><th>Issue</th><th>Location</th><th>Assigned to</th><th>Reported</th><th>Status</th><th></th></tr></thead><tbody>
+ ${list.map(t=>`<tr><td><span class="chip ${pc[t.priority]}">${t.priority}</span></td><td><div class="bold">${esc(t.title)}</div>${t.notes?`<div class="small muted">${esc(t.notes)}</div>`:''}</td><td>${t.roomId?'Room '+esc(room(t.roomId).no)+(t.blocks?' <span class="chip bad">Out of order</span>':''):esc(t.area)}</td><td>${t.assignee?esc(staffOf(t.assignee).name):'<span class="muted">Unassigned</span>'}</td><td>${fmtS(t.created)}</td><td><span class="chip ${t.status==='Done'?'ok':t.status==='Open'?'warn':'occ'}">${t.status}</span></td>
+ <td class="row">${t.status==='Open'?`<button class="btn sm" data-act="woStatus" data-id="${t.id}" data-s="In progress">Start</button>`:''}${t.status!=='Done'?`<button class="btn sm pri" data-act="woStatus" data-id="${t.id}" data-s="Done">Complete</button>`:''}<button class="btn sm danger" data-act="woDel" data-id="${t.id}">Delete</button></td></tr>`).join('')||`<tr><td colspan="7">${empty('No work orders here.')}</td></tr>`}</tbody></table></div></div>`};
+
+/* ---------- point of sale ---------- */
+V.pos=()=>{
+ const ih=S.res.filter(r=>r.status==='checked_in').sort((a,b)=>room(a.roomId).no.localeCompare(room(b.roomId).no));
+ if((!ui.pos.resId||!ih.find(r=>r.id===ui.pos.resId))&&ih[0])ui.pos.resId=ih[0].id;
+ const cart=ui.pos.cart,items=Object.keys(cart).map(id=>({c:S.catalog.find(x=>x.id===id),q:cart[id]})).filter(x=>x.c&&x.q>0);
+ const net=sum(items,x=>x.c.price*x.q),tax=vatOf(net),depts=[...new Set(S.catalog.map(c=>c.dept))];
+ if(!ih.length)return `<div class="card">${empty('No guests are in house. Check a guest in to post charges to their room.')}</div>`;
+ return `<div class="g2" style="grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:start"><div>
+ ${depts.map(d=>`<div class="card" style="margin-bottom:12px"><h3>${esc(d)}</h3><div class="cat">${S.catalog.filter(c=>c.dept===d).map(c=>`<button data-act="posAdd" data-id="${c.id}"><b>${esc(c.name)}</b><span class="muted small">${money(c.price)}${cart[c.id]?` · <span class="bold" style="color:var(--brand)">${cart[c.id]} in cart</span>`:''}</span></button>`).join('')}</div></div>`).join('')}</div>
+ <div class="card" style="position:sticky;top:76px"><h3>Charge to room</h3>
+ ${fld('Guest and room',sel('pos_res',ih.map(r=>[r.id,'Room '+room(r.roomId).no+' · '+guest(r.guestId).name]),ui.pos.resId,'data-ch="posRes"'))}
+ <div class="list mt">${items.map(x=>`<div class="li"><div style="flex:1"><div>${esc(x.c.name)}</div><div class="small muted">${money(x.c.price)} each</div></div><div class="row"><button class="btn sm" data-act="posQty" data-id="${x.c.id}" data-d="-1" aria-label="Remove one">-</button><b>${x.q}</b><button class="btn sm" data-act="posQty" data-id="${x.c.id}" data-d="1" aria-label="Add one">+</button></div><b class="num" style="min-width:76px">${money(x.c.price*x.q)}</b></div>`).join('')||empty('Pick items from the menu')}</div>
+ <table class="t" style="margin-top:8px"><tbody><tr><td>Subtotal</td><td class="num">${money(net)}</td></tr><tr><td>VAT ${S.settings.vat}%</td><td class="num">${money(tax)}</td></tr><tr><td class="bold">Total</td><td class="num bold">${money(net+tax)}</td></tr></tbody></table>
+ <div class="row mt"><button class="btn pri" data-act="posPost" ${items.length?'':'disabled'}>Post to room folio</button><button class="btn" data-act="posClear" ${items.length?'':'disabled'}>Clear</button></div>
+ <div class="mt small muted">Need something not on the menu? <button class="btn sm" data-act="posCustom">Add custom charge</button></div></div></div>`};
+
+/* ---------- inventory ---------- */
+V.inventory=()=>{
+ const val=sum(S.inventory,x=>x.qty*x.cost),low=S.inventory.filter(i=>i.qty<=i.reorder).length;
+ return `<div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px">${kpi('Stock value',money(val),S.inventory.length+' items')}${kpi('Below reorder level',low,low?'Order soon':'All stocked')}${kpi('Categories',[...new Set(S.inventory.map(i=>i.category))].length,'')}</div>
+ <div class="bar-top"><div class="grow"></div><button class="btn pri" data-act="invNew">Add item</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Item</th><th>Category</th><th class="num">On hand</th><th class="num">Reorder at</th><th class="num">Unit cost</th><th class="num">Value</th><th>Status</th><th></th></tr></thead><tbody>
+ ${S.inventory.map(i=>`<tr><td class="bold">${esc(i.name)}</td><td>${esc(i.category)}</td><td class="num">${i.qty} ${esc(i.unit)}</td><td class="num">${i.reorder}</td><td class="num">${money(i.cost)}</td><td class="num">${money(i.qty*i.cost)}</td><td>${i.qty<=i.reorder?'<span class="chip warn">Reorder</span>':'<span class="chip ok">OK</span>'}</td><td class="row"><button class="btn sm" data-act="invUse" data-id="${i.id}">Use</button><button class="btn sm" data-act="invRecv" data-id="${i.id}">Receive</button><button class="btn sm danger" data-act="invDel" data-id="${i.id}">Remove</button></td></tr>`).join('')}</tbody></table></div></div>`};
+
+/* ---------- staff ---------- */
+V.staff=()=>`<div class="bar-top"><span class="muted small">${S.staff.filter(s=>s.active).length} active staff</span><div class="grow"></div><button class="btn pri" data-act="staffNew">Add staff member</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Name</th><th>Role</th><th>Shift</th><th>Phone</th><th>Status</th><th></th></tr></thead><tbody>
+ ${S.staff.map(s=>`<tr><td class="bold">${esc(s.name)}</td><td>${esc(s.role)}</td><td>${esc(s.shift)}</td><td>${esc(s.phone)}</td><td><span class="chip ${s.active?'ok':''}">${s.active?'Active':'Inactive'}</span></td><td class="row"><button class="btn sm" data-act="staffEdit" data-id="${s.id}">Edit</button><button class="btn sm" data-act="staffToggle" data-id="${s.id}">${s.active?'Deactivate':'Reactivate'}</button></td></tr>`).join('')}</tbody></table></div></div>`;
+
+/* ---------- cashier ---------- */
+V.cashier=()=>{
+ const T=todayISO(),led=ledger(T,T),pays=led.filter(x=>x.type==='payment'),rf=led.filter(x=>x.type==='refund');
+ const byM=METHODS.map(m=>({m,v:sum(pays.filter(x=>x.method===m),'amount')-sum(rf.filter(x=>x.method===m),'amount')}));
+ const ar=receivables().sort((a,b)=>b.f.balance-a.f.balance);
+ const upcoming=S.res.filter(r=>r.status==='confirmed').map(r=>({r,f:folio(r)}));
+ const dep=sum(upcoming,x=>x.f.paid);
+ return `<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px">${byM.map(x=>kpi(x.m+' today',money(x.v),'')).join('')}</div>
+ <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px">${kpi('Collected today',money(sum(byM,'v')),pays.length+' payments, '+rf.length+' refunds')}${kpi('Guest balances owed',money(sum(ar,x=>x.f.balance)),ar.length+' open folios')}${kpi('Deposits held for arrivals',money(dep),'confirmed reservations')}</div>
+ ${tabs(ui.cashTab,[['out','Open folios'],['today','Today\'s transactions']],'cashTab')}
+ ${ui.cashTab==='out'?`<div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Code</th><th>Guest</th><th>Room</th><th>Status</th><th class="num">Total</th><th class="num">Paid</th><th class="num">Balance</th><th></th></tr></thead><tbody>${ar.map(({r,f})=>`<tr><td class="bold">${r.code}</td><td>${esc(guest(r.guestId).name)}</td><td>${esc(room(r.roomId).no)}</td><td>${rsChip(r.status)}</td><td class="num">${money(f.total)}</td><td class="num">${money(f.paid)}</td><td class="num bold">${money(f.balance)}</td><td class="row"><button class="btn sm pri" data-act="pay" data-id="${r.id}">Collect</button><button class="btn sm" data-act="openRes" data-id="${r.id}">Folio</button></td></tr>`).join('')||`<tr><td colspan="8">${empty('Every open folio is settled.')}</td></tr>`}</tbody></table></div></div>`
+ :`<div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Time</th><th>Ref</th><th>Type</th><th>Method or dept</th><th>Guest</th><th>Room</th><th class="num">Amount</th></tr></thead><tbody>${led.filter(x=>x.type!=='charge').map(x=>`<tr><td>${x.time}</td><td>${esc(x.ref)}</td><td>${x.type==='payment'?'<span class="chip ok">Payment</span>':'<span class="chip bad">Refund</span>'}</td><td>${esc(x.method)}</td><td>${esc(x.guest)}</td><td>${esc(x.room)}</td><td class="num">${x.type==='refund'?'-':''}${money(x.amount)}</td></tr>`).join('')||`<tr><td colspan="7">${empty('No payments taken yet today.')}</td></tr>`}</tbody></table></div></div>`}`};
+
+/* ---------- expenses ---------- */
+V.expenses=()=>{
+ const {from,to}=ui.range;let list=S.expenses.filter(e=>e.date>=from&&e.date<=to&&(ui.expCat==='all'||e.category===ui.expCat)).sort((a,b)=>b.date.localeCompare(a.date));
+ const by={};S.expenses.filter(e=>e.date>=from&&e.date<=to).forEach(e=>by[e.category]=(by[e.category]||0)+e.amount);
+ const bars=Object.keys(by).sort((a,b)=>by[b]-by[a]).map((k,i)=>({label:k,value:by[k],color:PAL[i%6]}));
+ return `${rangeBar()}<div class="g2" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:start"><div class="card"><h3>Spend by category</h3>${hbars(bars)}<div class="mt bold">Total ${money(sum(bars,'value'))}</div></div>
+ <div><div class="bar-top">${sel('ec',[['all','All categories'],...EXP_CATS],ui.expCat,'class="inp sm" data-ch="expCat"')}<div class="grow"></div>${csvBtn('expenses')}<button class="btn pri" data-act="expNew">Record expense</button></div>
+ <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Date</th><th>Category</th><th>Vendor</th><th>Paid via</th><th class="num">Amount</th><th></th></tr></thead><tbody>${list.slice(0,200).map(e=>`<tr><td>${fmtS(e.date)}</td><td>${esc(e.category)}</td><td>${esc(e.vendor)}${e.note?`<div class="small muted">${esc(e.note)}</div>`:''}</td><td>${esc(e.method)}</td><td class="num">${money(e.amount)}</td><td><button class="btn sm danger" data-act="expDel" data-id="${e.id}">Delete</button></td></tr>`).join('')||`<tr><td colspan="6">${empty('No expenses in this period.')}</td></tr>`}</tbody></table></div></div></div></div>`};
+
+/* ---------- statements ---------- */
+function incomeData(from,to){
+ const rv=revenueBy(from,to),ex=S.expenses.filter(e=>e.date>=from&&e.date<=to&&e.category!=='Tax remittance'),by={};
+ ex.forEach(e=>by[e.category]=(by[e.category]||0)+e.amount);
+ const rev=DEPTS.concat(Object.keys(rv.by).filter(d=>!DEPTS.includes(d)));
+ const cogs=by['Food & beverage cost']||0,opex=EXP_CATS.filter(c=>c!=='Food & beverage cost'&&c!=='Tax remittance');
+ const opexTot=sum(opex,c=>by[c]||0);
+ return{rev,rvBy:rv.by,revTot:rv.net,vat:rv.tax,cogs,gp:rv.net-cogs,opex,by,opexTot,net:rv.net-cogs-opexTot};
+}
+function statementRows(){
+ const T=todayISO(),from=ui.range.from,to=ui.range.to>T?T:ui.range.to;
+ if(ui.stmt==='income'){const len=nightsBetween(from,to)+1,pT=addDays(from,-1),pF=addDays(pT,-(len-1)),c=incomeData(from,to),p=incomeData(pF,pT),rows=[];
+  rows.push(['Revenue (net of tax)',null,null,'hdr']);
+  c.rev.forEach(d=>{if(c.rvBy[d]||p.rvBy[d])rows.push([d,c.rvBy[d]||0,p.rvBy[d]||0,'sub'])});
+  rows.push(['Total revenue',c.revTot,p.revTot,'tot']);
+  rows.push(['Cost of sales',null,null,'hdr']);rows.push(['Food and beverage cost',c.cogs,p.cogs,'sub']);
+  rows.push(['Gross profit',c.gp,p.gp,'tot']);
+  rows.push(['Operating expenses',null,null,'hdr']);
+  c.opex.forEach(k=>rows.push([k,c.by[k]||0,p.by[k]||0,'sub']));
+  rows.push(['Total operating expenses',c.opexTot,p.opexTot,'tot']);
+  rows.push(['Net operating profit',c.net,p.net,'gt']);
+  rows.push(['Net margin',c.revTot?c.net/c.revTot*100:0,p.revTot?p.net/p.revTot*100:0,'pct']);
+  return{title:'Income statement',sub:fmtD(from)+' to '+fmtD(to)+' compared with '+fmtD(pF)+' to '+fmtD(pT),cols:['This period','Prior period'],rows,note:'Management accounts before depreciation, interest and income tax. Revenue excludes VAT.'}}
+ if(ui.stmt==='balance'){const b=balanceSheet(to),cashTot=sum(Object.values(b.cash),v=>v),rows=[];
+  rows.push(['Assets',null,'hdr']);Object.keys(b.cash).forEach(k=>rows.push([k,b.cash[k],'sub']));
+  rows.push(['Total cash and bank',cashTot,'tot']);rows.push(['Guest receivables',b.ar,'sub']);
+  const ta=cashTot+b.ar;rows.push(['Total assets',ta,'gt']);
+  rows.push(['Liabilities',null,'hdr']);rows.push(['Guest deposits and advance payments',b.dep,'sub']);rows.push(['VAT payable',b.vatPay,'sub']);
+  const tl=b.dep+b.vatPay;rows.push(['Total liabilities',tl,'tot']);
+  rows.push(['Equity',null,'hdr']);rows.push(['Opening capital (cash at start)',b.opening,'sub']);rows.push(['Retained earnings',b.retained,'sub']);
+  const te=b.opening+b.retained;rows.push(['Total equity',te,'tot']);rows.push(['Total liabilities and equity',tl+te,'gt']);
+  rows.push(['Memo: stock on hand at cost (not capitalised)',b.stock,'sub']);
+  return{title:'Balance sheet',sub:'As at '+fmtD(to),cols:['Amount'],rows,check:Math.abs(ta-(tl+te))<1,note:'Simplified position: stock, fixed assets and depreciation are not recorded.'}}
+ if(ui.stmt==='cash'){const led=ledger(from,to),rows=[],open=sum(Object.values(cashAsAt(addDays(from,-1))),v=>v),close=sum(Object.values(cashAsAt(to)),v=>v);
+  rows.push(['Receipts from guests',null,'hdr']);METHODS.forEach(m=>{const v=sum(led.filter(x=>x.type==='payment'&&x.method===m),'amount')-sum(led.filter(x=>x.type==='refund'&&x.method===m),'amount');rows.push([m+' (net of refunds)',v,'sub'])});
+  const rec=sum(led.filter(x=>x.type==='payment'),'amount')-sum(led.filter(x=>x.type==='refund'),'amount');rows.push(['Total receipts',rec,'tot']);
+  rows.push(['Payments to suppliers and staff',null,'hdr']);let out=0;const ex=S.expenses.filter(e=>e.date>=from&&e.date<=to);EXP_CATS.forEach(c=>{const v=sum(ex.filter(e=>e.category===c),'amount');if(v){out+=v;rows.push([c,-v,'sub'])}});
+  rows.push(['Total payments',-out,'tot']);rows.push(['Net cash movement',rec-out,'tot']);
+  rows.push(['Opening cash and bank',open,'sub']);rows.push(['Closing cash and bank',close,'gt']);
+  return{title:'Cash flow',sub:fmtD(from)+' to '+fmtD(to),cols:['Amount'],rows,note:'Direct method. Card settlements are treated as received into the bank account.'}}
+ const rv=revenueBy(from,to),rem=sum(S.expenses.filter(e=>e.category==='Tax remittance'&&e.date>=from&&e.date<=to),'amount'),rows=[];
+ rows.push(['Output VAT charged, by department',null,'hdr']);DEPTS.forEach(d=>{const v=sum(rv.rows.filter(x=>x.dept===d),'tax');if(v)rows.push([d,v,'sub'])});
+ rows.push(['Total output VAT',rv.tax,'tot']);rows.push(['Remitted to tax authority',-rem,'sub']);rows.push(['Net movement in VAT payable',rv.tax-rem,'tot']);
+ rows.push(['VAT payable at end of period',balanceSheet(to).vatPay,'gt']);
+ return{title:'Tax summary',sub:fmtD(from)+' to '+fmtD(to)+' at '+S.settings.vat+'% VAT',cols:['Amount'],rows,note:'Input VAT on purchases is not tracked. Confirm returns with your tax adviser before filing.'}}
+V.statements=()=>{
+ const st=statementRows(),T=todayISO();
+ const cell=(v,style)=>v==null?'':style==='pct'?v.toFixed(1)+'%':(v<0?'('+money2(-v)+')':money2(v));
+ const delta=(a,b)=>b?`<td class="num muted">${(a-b)/Math.abs(b)*100>=0?'+':''}${((a-b)/Math.abs(b)*100).toFixed(0)}%</td>`:'<td></td>';
+ return `${tabs(ui.stmt,[['income','Income statement'],['balance','Balance sheet'],['cash','Cash flow'],['tax','Tax summary']],'stmtTab')}${rangeBar()}
+ <div class="card"><div class="hd"><div><h2>${st.title}</h2><div class="small muted">${esc(H.S.settings.hotel)} · ${esc(st.sub)}</div></div><div class="grow"></div>${csvBtn('statement')}</div>
+ <div class="tw"><table class="t stmt"><thead><tr><th></th>${st.cols.map(c=>`<th class="num">${c}</th>`).join('')}${ui.stmt==='income'?'<th class="num">Change</th>':''}</tr></thead><tbody>
+ ${st.rows.map(r=>{const style=r[r.length-1];if(ui.stmt==='income')return `<tr class="${style==='hdr'?'hdr':style==='tot'?'tot':style==='gt'?'gt':''}"><td class="${style==='sub'?'sub':''}">${esc(r[0])}</td><td class="num">${cell(r[1],style)}</td><td class="num">${cell(r[2],style)}</td>${r[1]==null||style==='pct'?'<td></td>':delta(r[1],r[2])}</tr>`;
+  return `<tr class="${style==='hdr'?'hdr':style==='tot'?'tot':style==='gt'?'gt':''}"><td class="${style==='sub'?'sub':''}">${esc(r[0])}</td><td class="num">${cell(r[1],style)}</td></tr>`}).join('')}</tbody></table></div>
+ ${st.check!=null?`<div class="note ${st.check?'ok':'bad'} mt">${st.check?'The balance sheet balances: assets equal liabilities plus equity.':'The balance sheet is out of balance. Check for edited transactions.'}</div>`:''}
+ <p class="small muted" style="margin:12px 0 0">${esc(st.note)}${ui.range.to>T?' Dates after today are ignored.':''}</p></div>`};
+
+/* ---------- reports ---------- */
+function txRows(){const {from,to}=ui.range,q=ui.txQ.toLowerCase();return ledger(from,to).filter(x=>(ui.txType==='all'||x.type===ui.txType)&&(!q||(x.ref+' '+x.guest+' '+x.code+' '+x.method+' '+x.dept+' '+x.room+' '+x.note).toLowerCase().includes(q)))}
+V.reports=()=>{
+ const {from,to}=ui.range;let body='';
+ if(ui.rpt==='transactions'){const rows=txRows(),ch=sum(rows.filter(x=>x.type==='charge'),'amount'),pay=sum(rows.filter(x=>x.type==='payment'),'amount'),rf=sum(rows.filter(x=>x.type==='refund'),'amount');
+  body=`<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px">${kpi('Charges posted',money(ch),'incl. tax')}${kpi('Payments received',money(pay),'')}${kpi('Refunds',money(rf),'')}${kpi('Net receipts',money(pay-rf),rows.length+' lines')}</div>
+  <div class="bar-top">${sel('tt',[['all','All types'],['charge','Charges'],['payment','Payments'],['refund','Refunds']],ui.txType,'class="inp sm" data-ch="txType"')}<input class="inp sm" style="width:240px" id="txq" data-in="txQ" placeholder="Search ref, guest, method or room" value="${esc(ui.txQ)}" aria-label="Search transactions"><div class="grow"></div>${csvBtn('transactions')}</div>
+  <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Date</th><th>Ref</th><th>Type</th><th>Dept or method</th><th>Guest</th><th>Room</th><th class="num">Net</th><th class="num">Tax</th><th class="num">Gross</th></tr></thead><tbody>
+  ${rows.slice(0,300).map(x=>`<tr><td>${fmtS(x.date)} ${x.time!=='00:00'?x.time:''}</td><td>${esc(x.ref)}</td><td>${x.type==='charge'?'<span class="chip">Charge</span>':x.type==='payment'?'<span class="chip ok">Payment</span>':'<span class="chip bad">Refund</span>'}</td><td>${esc(x.type==='charge'?x.dept:x.method)}</td><td>${esc(x.guest)}</td><td>${esc(x.room)}</td><td class="num">${x.type==='charge'?money2(x.net):''}</td><td class="num">${x.type==='charge'?money2(x.tax):''}</td><td class="num">${x.type==='refund'?'-':''}${money2(x.amount)}</td></tr>`).join('')||`<tr><td colspan="9">${empty('No transactions in this period.')}</td></tr>`}</tbody></table></div></div>${rows.length>300?`<p class="small muted">Showing the latest 300 of ${rows.length}. Download the CSV for everything.</p>`:''}`}
+ else if(ui.rpt==='daily'){const f=to>addDays(from,120)?addDays(to,-120):from,ds=dayStats(f,to),tot={sold:sum(ds,'sold'),av:sum(ds,'avail'),rr:sum(ds,'roomRev'),ot:sum(ds,'other')};
+  body=`<div class="card mt" style="margin-top:0"><h3>Occupancy</h3>${ds.length>1?lineChart(ds.map(d=>fmtS(d.date)),ds.map(d=>Math.round(d.occ*100)),{max:100,fmt:v=>Math.round(v)+'%',color:'var(--c3)',label:'Occupancy by day',todayIdx:ds.findIndex(d=>d.date===todayISO())}):''}</div>
+  <div class="bar-top mt"><span class="muted small">Room revenue is counted for nights already stayed. Future nights show occupancy only.</span><div class="grow"></div>${csvBtn('daily')}</div>
+  <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Date</th><th class="num">Available</th><th class="num">Sold</th><th class="num">Occupancy</th><th class="num">ADR</th><th class="num">RevPAR</th><th class="num">Room revenue</th><th class="num">Other revenue</th><th class="num">Total</th></tr></thead><tbody>
+  ${ds.slice().reverse().map(d=>`<tr><td>${dow(d.date)} ${fmtS(d.date)}</td><td class="num">${d.avail}</td><td class="num">${d.sold}</td><td class="num">${pct(d.occ)}</td><td class="num">${d.adr?money(d.adr):'-'}</td><td class="num">${d.roomRev?money(d.revpar):'-'}</td><td class="num">${money(d.roomRev)}</td><td class="num">${money(d.other)}</td><td class="num">${money(d.total)}</td></tr>`).join('')}</tbody>
+  <tfoot><tr><td>Period</td><td class="num">${tot.av}</td><td class="num">${tot.sold}</td><td class="num">${pct(tot.sold/(tot.av||1))}</td><td class="num">${tot.rr&&tot.sold?money(tot.rr/tot.sold):'-'}</td><td class="num">${money(tot.rr/(tot.av||1))}</td><td class="num">${money(tot.rr)}</td><td class="num">${money(tot.ot)}</td><td class="num">${money(tot.rr+tot.ot)}</td></tr></tfoot></table></div></div>`}
+ else if(ui.rpt==='segments'){const rows=ledger(from,to).filter(x=>x.type==='charge'&&x.dept==='Rooms'),byT={},byS={};
+  rows.forEach(x=>{const r=resv(x.resId),t=typeOf(room(r.roomId).typeId).name;byT[t]=byT[t]||{n:0,v:0};byT[t].n++;byT[t].v+=x.net;byS[r.source]=byS[r.source]||{n:0,v:0,ids:new Set()};byS[r.source].n++;byS[r.source].v+=x.net;byS[r.source].ids.add(r.id)});
+  const tb=(o,ex)=>Object.keys(o).sort((a,b)=>o[b].v-o[a].v).map(k=>`<tr><td class="bold">${esc(k)}</td>${ex?`<td class="num">${o[k].ids.size}</td>`:''}<td class="num">${o[k].n}</td><td class="num">${money(o[k].v/o[k].n)}</td><td class="num">${money(o[k].v)}</td></tr>`).join('')||`<tr><td colspan="5">${empty('No room revenue in this period.')}</td></tr>`;
+  body=`<div class="g2"><div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Room type</th><th class="num">Nights</th><th class="num">ADR</th><th class="num">Revenue</th></tr></thead><tbody>${tb(byT,false)}</tbody></table></div></div>
+  <div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Source</th><th class="num">Bookings</th><th class="num">Nights</th><th class="num">ADR</th><th class="num">Revenue</th></tr></thead><tbody>${tb(byS,true)}</tbody></table></div></div></div>`}
+ else{const T=todayISO(),ar=receivables().map(x=>({...x,age:x.r.status==='checked_in'?-1:nightsBetween(x.r.checkOut,T)})).sort((a,b)=>b.f.balance-a.f.balance);
+  const bk=[['In house',x=>x.age<0],['0 to 30 days',x=>x.age>=0&&x.age<=30],['31 to 60 days',x=>x.age>30&&x.age<=60],['Over 60 days',x=>x.age>60]];
+  body=`<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px">${bk.map(([l,fn])=>kpi(l,money(sum(ar.filter(fn),x=>x.f.balance)),ar.filter(fn).length+' folios')).join('')}</div>
+  <div class="bar-top"><div class="grow"></div>${csvBtn('receivables')}</div><div class="card" style="padding:0"><div class="tw"><table class="t"><thead><tr><th>Code</th><th>Guest</th><th>Company</th><th>Check-out</th><th class="num">Age (days)</th><th class="num">Balance</th><th></th></tr></thead><tbody>${ar.map(x=>`<tr><td class="bold">${x.r.code}</td><td>${esc(guest(x.r.guestId).name)}</td><td>${esc(guest(x.r.guestId).company)}</td><td>${fmtS(x.r.checkOut)}</td><td class="num">${x.age<0?'In house':x.age}</td><td class="num bold">${money(x.f.balance)}</td><td><button class="btn sm pri" data-act="pay" data-id="${x.r.id}">Collect</button></td></tr>`).join('')||`<tr><td colspan="7">${empty('No receivables. Every guest folio is settled.')}</td></tr>`}</tbody></table></div></div>`}
+ return `${tabs(ui.rpt,[['transactions','Transactions'],['daily','Daily revenue and occupancy'],['segments','Room types and sources'],['ar','Receivables']],'rptTab')}${ui.rpt==='ar'?'':rangeBar()}${body}`};
+
+/* ---------- settings ---------- */
+V.settings=()=>{
+ const s=S.settings;let body='';
+ if(ui.setTab==='property')body=`<div class="card" style="max-width:720px"><h3>Property</h3><div class="frm">${fld('Hotel name',inp('s_hotel',s.hotel))}${fld('Currency code',inp('s_cur',s.currency,'maxlength="4"'))}${fld('VAT rate (%)',inp('s_vat',s.vat,'type="number" min="0" step="0.5"'))}${fld('Tax PIN (for invoices)',inp('s_pin',s.taxPin))}${fld('Standard check-in time',inp('s_in',s.checkInTime,'type="time"'))}${fld('Standard check-out time',inp('s_out',s.checkOutTime,'type="time"'))}${fld('Opening cash and bank balance',inp('s_open',s.openingCash,'type="number" min="0"'),'full')}
+ ${fld('Booking sources (comma separated)',inp('s_src',s.sources.join(', ')),'full')}</div><div class="row mt"><button class="btn pri" data-act="setSave">Save settings</button></div></div>`;
+ else if(ui.setTab==='rates')body=`<div class="g2" style="align-items:start"><div class="card"><div class="hd"><h3>Rate plans</h3><div class="grow"></div><button class="btn sm" data-act="planNew">Add plan</button></div><table class="t"><thead><tr><th>Plan</th><th class="num">Price vs rack rate</th><th></th></tr></thead><tbody>${S.plans.map(p=>`<tr><td class="bold">${esc(p.name)}</td><td class="num">${Math.round(p.mult*100)}%</td><td class="row"><button class="btn sm" data-act="planEdit" data-id="${p.id}">Edit</button>${S.plans.length>1?`<button class="btn sm danger" data-act="planDel" data-id="${p.id}">Delete</button>`:''}</td></tr>`).join('')}</tbody></table></div>
+ <div class="card"><div class="hd"><h3>Service menu</h3><div class="grow"></div><button class="btn sm" data-act="catNew">Add item</button></div><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><thead><tr><th>Item</th><th>Dept</th><th class="num">Price</th><th></th></tr></thead><tbody>${S.catalog.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.dept)}</td><td class="num">${money(c.price)}</td><td class="row"><button class="btn sm" data-act="catEdit" data-id="${c.id}">Edit</button><button class="btn sm danger" data-act="catDel" data-id="${c.id}">Delete</button></td></tr>`).join('')}</tbody></table></div></div></div>`;
+ else if(ui.setTab==='payments')body=`<div class="g2" style="align-items:start"><div class="card"><h3>Payment gateways</h3><div class="note warn" style="margin-bottom:12px">This build runs gateways in simulation mode. Nothing is charged and no request leaves your browser. Live M-Pesa and card processing needs a server that holds your secret keys.</div>
+ <div class="frm"><div class="full"><b>M-Pesa (Safaricom Daraja)</b></div>${fld('Environment',sel('s_menv',['sandbox','production'],s.mpesaEnv))}${fld('Paybill or till number',inp('s_mshort',s.mpesaShort))}${fld('Callback URL (your server)',inp('s_mcb',s.mpesaCallback,'placeholder="https://api.yourhotel.co.ke/mpesa/callback"'),'full')}
+ <div class="full"><b>Cards</b></div>${fld('Provider',sel('s_cprov',['Stripe','Pesapal','Flutterwave','DPO Group','Paystack'],s.cardProvider))}${fld('Publishable key (public only)',inp('s_ckey',s.cardKey,'placeholder="pk_..."'))}</div>
+ <div class="note mt small">Never enter consumer secrets, passkeys or secret API keys here. They belong in server environment variables.</div><div class="row mt"><button class="btn pri" data-act="setSave">Save gateway settings</button></div></div>
+ <div><div class="card"><h3>Going live checklist</h3><div class="list small"><div class="li">Stand up a backend API with a database (Postgres) and move this data model into it.</div><div class="li">M-Pesa: create a Daraja app, then implement STK Push and a public HTTPS callback that verifies and records each result.</div><div class="li">Cards: create the payment intent on the server and confirm it from a webhook, never from the browser.</div><div class="li">Match every gateway event to a folio by reference, and reject duplicates.</div><div class="li">Add staff logins with roles, an audit trail, and nightly backups.</div></div></div>
+ <div class="card mt"><h3>Gateway event log</h3><div class="tw" style="max-height:260px;overflow-y:auto"><table class="t"><thead><tr><th>Time</th><th>Provider</th><th>Event</th><th>Ref</th><th class="num">Amount</th></tr></thead><tbody>${S.gateway.slice().reverse().slice(0,40).map(g=>`<tr><td>${esc(g.ts)}</td><td>${esc(g.provider)}</td><td><span class="chip ${/success|succeeded|refund/.test(g.event)?'ok':/fail|cancel|declin/.test(g.event)?'bad':''}">${esc(g.event)}</span></td><td>${esc(g.ref)}</td><td class="num">${g.amount?money(g.amount):''}</td></tr>`).join('')||`<tr><td colspan="5">${empty('No gateway events yet')}</td></tr>`}</tbody></table></div></div></div></div>`;
+ else body=`<div class="card" style="max-width:720px"><h3>Your data</h3><p class="muted">Everything is stored in this browser only. Download a backup regularly, and use a server database before running a real property on it.</p><div class="row"><button class="btn" data-act="backup">Download backup (JSON)</button></div>
+ <h3 class="mt">Demo data</h3><div class="row"><button class="btn" data-act="resetDemo">Reload demo data</button></div><p class="small muted">Operational record deletion is disabled in the browser demo. The production API retains audit records and requires an authorised retention workflow.</p></div>`;
+ return `${tabs(ui.setTab,[['property','Property and tax'],['rates','Rates and services'],['payments','Payments'],['data','Data']],'setTab')}${body}`};
+window.__V={V,A,IN,CH,ui,setPreset,navHtml,NAV,syncS,sel,inp,fld,gv,gn,opt,empty,rsChip,roomChip,statementRows,txRows,incomeData,METHODS,EXP_CATS,DEPTS,kpi,money,RSL};
+})();
+(function(){
+'use strict';
+const H=window.__H,X=window.__V;
+const {$,esc,round2,sum,todayISO,addDays,nightsBetween,nowTime,fmtD,fmtS,uid,money,money2,room,guest,resv,typeOf,planOf,staffOf,RS,nightsOf,vatOf,folio,freeRooms,isFree,inhouse,roomState,STL,ledger,dayStats,receivables}=H;
+const {V,A,IN,CH,ui,setPreset,sel,inp,fld,gv,gn,rsChip,METHODS,EXP_CATS,DEPTS,RSL}=X;
+let S=H.S,modalRes=null,pending=null,bkPre='',pay=null;
+const sync=()=>{S=H.S;X.syncS()};
+const byName=(a,b)=>a.name.localeCompare(b.name);
+const nextTxn=()=>'T'+String(++S.seq.txn).padStart(6,'0');
+const rand=n=>String(Math.floor(Math.random()*Math.pow(10,n))).padStart(n,'0');
+const $id=id=>document.getElementById(id);
+
+/* ---------- render, modal, toast ---------- */
+function render(){
+ const a=document.activeElement,aid=a&&a.id,ss=a&&a.selectionStart,se=a&&a.selectionEnd;
+ try{
+  $('#hname').textContent=S.settings.hotel;document.title=S.settings.hotel+' · Hotel management';
+  $('#nav').innerHTML=X.navHtml();
+  const lab=[].concat(...X.NAV.map(g=>g[1])).find(x=>x[0]===ui.view);$('#ttl').textContent=lab?lab[1]:'Dashboard';
+  $('#view').innerHTML=(V[ui.view]||V.dashboard)();
+  $('#bdate').textContent='Business date '+fmtD(todayISO());
+  $('#app').classList.toggle('nav-open',ui.navOpen);
+ }catch(e){console.error(e);$('#view').innerHTML='<div class="card"><h3>Something went wrong showing this page</h3><p class="muted">'+esc(e.message)+'</p></div>'}
+ if(aid&&!$('#modal').classList.contains('open')){const n=$id(aid);if(n&&n!==document.activeElement){n.focus();try{n.setSelectionRange(ss,se)}catch(e){}}}
+}
+const commit=()=>{H.save();render()};
+function openModal(title,body,foot,wide){
+ const m=$('#modal');m.innerHTML=`<div class="dlg${wide?' wide':''}"><div class="dh"><h2>${esc(title)}</h2><button class="ib" data-act="closeModal" aria-label="Close">&times;</button></div><div class="db">${body}</div>${foot?`<div class="df">${foot}</div>`:''}</div>`;
+ m.classList.add('open');const f=m.querySelector('input:not([disabled]):not([type=hidden]),select:not([disabled])');if(f&&!modalRes)f.focus();
+}
+function closeModal(){$('#modal').classList.remove('open');$('#modal').innerHTML='';modalRes=null;pending=null}
+const modalOpen=()=>$('#modal').classList.contains('open');
+function toast(msg,kind){const t=document.createElement('div');t.className='toast '+(kind||'');t.textContent=msg;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),4200)}
+function confirmBox(title,msg,yes,fn,danger){pending=fn;const keep=modalRes;modalRes=null;openModal(title,`<p style="margin:0">${msg}</p>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn ${danger?'danger':'pri'}" data-act="confirmYes">${esc(yes)}</button>`);modalRes=null}
+const toCSV=rows=>rows.map(r=>r.map(c=>{c=c==null?'':String(c);return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(',')).join('\n');
+async function saveFile(name,data){
+ try{const blob=new Blob([data],{type:name.endsWith('.json')?'application/json':'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0);toast('Saved '+name,'ok')
+ }catch(e){toast('Could not save the file','bad')}
+}
+function afterRes(id){commit();if(modalOpen()&&modalRes===id)resModal(id)}
+
+/* ---------- booking form ---------- */
+function bookingModal(o){
+ o=o||{};const T=todayISO(),ex=o.id?resv(o.id):null;
+ const ci=ex?ex.checkIn:(o.checkIn||T),co=ex?ex.checkOut:(o.checkOut||addDays(ci,1));
+ bkPre=ex?ex.roomId:(o.roomId||'');X.bkEditId=ex?ex.id:null;
+ const preType=bkPre?room(bkPre).typeId:'';
+ const dis=ex&&ex.status==='checked_in'?'disabled':'';
+ const body=`<div class="frm">
+ ${fld('Guest',sel('bk_g',[['','New guest'],...S.guests.slice().sort(byName).map(g=>[g.id,g.name+(g.company?' · '+g.company:'')])],ex?ex.guestId:(o.guestId||''),'data-ch="bkUpd" '+(ex?'disabled':'')),'full')}
+ <div class="full frm" id="bk_new">${fld('Full name',inp('bk_gn','','autocomplete="off"'))}${fld('Phone',inp('bk_gp','','inputmode="tel" placeholder="07xx xxx xxx"'))}${fld('Email',inp('bk_ge','','type="email"'))}${fld('ID or passport number',inp('bk_gi',''))}</div>
+ ${fld('Check-in',inp('bk_ci',ci,'type="date" data-ch="bkUpd" '+dis))}${fld('Check-out',inp('bk_co',co,'type="date" data-ch="bkUpd"'))}
+ ${fld('Room type',sel('bk_type',[['','Any type'],...S.types.map(t=>[t.id,t.name])],preType,'data-ch="bkUpd"'))}${fld('Room',sel('bk_room',[['','']],'',''))}
+ ${fld('Adults',inp('bk_ad',ex?ex.adults:1,'type="number" min="1" data-ch="bkUpd"'))}${fld('Children',inp('bk_chd',ex?ex.children:0,'type="number" min="0" data-ch="bkUpd"'))}
+ ${fld('Rate plan',sel('bk_plan',S.plans.map(p=>[p.id,p.name+' ('+Math.round(p.mult*100)+'%)']),ex?ex.planId:S.plans[0].id,'data-ch="bkUpd"'))}${fld('Rate per night, excl. tax (optional override)',inp('bk_rate',ex&&ex.rateOverride?ex.rate:'','type="number" min="0" data-in="bkUpd"'))}
+ ${fld('Source',sel('bk_src',S.settings.sources,ex?ex.source:(o.checkIn===T&&!ex?'Walk-in':S.settings.sources[0])))}${fld('Notes',inp('bk_notes',ex?ex.notes:''),'')}
+ <div class="full" id="bk_sum"></div><div class="full" id="bk_err"></div></div>`;
+ modalRes=null;
+ openModal(ex?'Edit reservation '+ex.code:'New booking',body,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="bkSave">${ex?'Save changes':'Create booking'}</button>`,true);
+ bkUpd();
+}
+function bkUpd(){
+ const id=X.bkEditId,ex=id?resv(id):null,ci=gv('bk_ci'),co=gv('bk_co'),tp=gv('bk_type');
+ $id('bk_new').style.display=gv('bk_g')?'none':'';
+ const rs=$id('bk_room'),prev=rs.value||bkPre;
+ let list=[];if(ci&&co&&co>ci)list=freeRooms(ci,co,id).filter(r=>!tp||r.typeId===tp);
+ if(ex&&ex.status==='checked_in'&&!list.find(r=>r.id===ex.roomId)&&room(ex.roomId))list.unshift(room(ex.roomId));
+ rs.innerHTML=list.length?list.map(r=>`<option value="${r.id}">Room ${r.no} · ${esc(typeOf(r.typeId).name)}</option>`).join(''):'<option value="">No rooms free for these dates</option>';
+ if(list.find(r=>r.id===prev))rs.value=prev;
+ const rm=room(rs.value),pl=planOf(gv('bk_plan')),auto=rm?Math.round(typeOf(rm.typeId).rate*pl.mult/50)*50:0,ov=gn('bk_rate'),rate=ov>0?ov:auto;
+ $id('bk_rate').placeholder=auto?String(auto):'';
+ const n=co>ci?nightsBetween(ci,co):0,net=n*rate,tax=vatOf(net),cap=rm?typeOf(rm.typeId).cap:0,guests=gn('bk_ad')+gn('bk_chd');
+ $id('bk_sum').innerHTML=rm&&n>0?`<div class="note"><b>${n} night${n>1?'s':''}</b> at ${money(rate)} per night = ${money(net)} + VAT ${money(tax)} = <b>${money(net+tax)}</b>${guests>cap?`<div style="color:var(--warn);margin-top:4px">This room sleeps ${cap}. You have entered ${guests} guests.</div>`:''}</div>`:'';
+}
+A.bkSave=()=>{
+ const id=X.bkEditId,ex=id?resv(id):null,T=todayISO(),ci=gv('bk_ci'),co=gv('bk_co'),err=m=>{$id('bk_err').innerHTML=`<div class="note bad">${esc(m)}</div>`};
+ let gid=gv('bk_g');
+ if(!gid&&!gv('bk_gn').trim())return err('Enter the guest name, or pick an existing guest.');
+ if(!ci||!co||co<=ci)return err('Check-out must be after check-in.');
+ if(!ex&&ci<T)return err('Check-in cannot be in the past.');
+ const rid=gv('bk_room');if(!rid)return err('No room is free for these dates. Change the dates or room type.');
+ if(!isFree(rid,ci,co,id))return err('That room is already booked for these dates.');
+ const ad=Math.max(1,gn('bk_ad')),chd=Math.max(0,gn('bk_chd')),rm=room(rid),pl=planOf(gv('bk_plan')),auto=Math.round(typeOf(rm.typeId).rate*pl.mult/50)*50,ov=gn('bk_rate'),rate=ov>0?ov:auto;
+ if(ad+chd>typeOf(rm.typeId).cap)return err('Guest count exceeds this room\'s capacity of '+typeOf(rm.typeId).cap+'.');
+ if(!gid){const g={id:uid('g'),name:gv('bk_gn').trim(),phone:gv('bk_gp').trim(),email:gv('bk_ge').trim(),idNo:gv('bk_gi').trim(),nationality:'Kenya',company:'',vip:false,notes:''};S.guests.push(g);gid=g.id}
+ const f={guestId:gid,roomId:rid,checkIn:ci,checkOut:co,adults:ad,children:chd,planId:pl.id,rate,rateOverride:ov>0,source:gv('bk_src'),notes:gv('bk_notes')};
+ let rid2;
+ if(ex){Object.assign(ex,f);rid2=ex.id;toast('Reservation updated','ok')}
+ else{const n=++S.seq.res;const r=Object.assign({id:'r'+n,code:'R'+String(n).padStart(5,'0'),status:'confirmed',created:T},f);S.res.push(r);rid2=r.id;toast('Booking '+r.code+' created','ok')}
+ H.save();closeModal();render();resModal(rid2);
+};
+CH.bkUpd=bkUpd;IN.bkUpd=bkUpd;
+
+/* ---------- reservation folio modal ---------- */
+function resModal(id){
+ const r=resv(id);if(!r)return closeModal();
+ const g=guest(r.guestId),rm=room(r.roomId),ty=typeOf(rm.typeId),pl=planOf(r.planId),f=folio(r),T=todayISO();
+ const b=(a,l,c,x)=>`<button class="btn ${c||''}" data-act="${a}" data-id="${id}" ${x||''}>${l}</button>`;
+ let foot='';
+ const live=r.status!=='cancelled'&&r.status!=='no_show';
+ if(live){foot+=b('invoice','Download invoice');if(f.pays.length||f.rf.length)foot+=b('refund','Refund');foot+=b('chargeNew','Post charge');if(f.balance>0.5)foot+=b('pay','Take payment','pri')}
+ if(r.status==='confirmed'){foot+=b('resCancel','Cancel booking','danger');if(r.checkIn<=T)foot+=b('resCancel','No-show','danger','data-kind="noshow"');foot+=b('resEdit','Edit');foot+=b('checkin','Check in','pri')}
+ else if(r.status==='checked_in'){foot+=b('resEdit','Edit stay');foot+=b('checkout','Check out','pri')}
+ const lines=[];
+ if(f.roomNet>0)lines.push(`<tr><td>${fmtS(r.checkIn)} to ${fmtS(r.checkOut)}</td><td>Rooms</td><td>${esc(ty.name)}, room ${rm.no}: ${f.nights} night${f.nights>1?'s':''} at ${money2(r.rate)} (${esc(pl.name)})</td><td class="num">${money2(f.roomNet)}</td><td class="num">${money2(f.roomTax)}</td><td class="num">${money2(f.roomGross)}</td><td></td></tr>`);
+ f.charges.slice().sort((a,c)=>a.date.localeCompare(c.date)).forEach(t=>lines.push(`<tr><td>${fmtS(t.date)}</td><td>${esc(t.dept)}</td><td>${esc(t.note)}</td><td class="num">${money2(t.net)}</td><td class="num">${money2(t.tax)}</td><td class="num">${money2(t.amount)}</td><td>${r.status!=='checked_out'?`<button class="btn sm danger" data-act="void" data-id="${id}" data-t="${t.id}" aria-label="Void charge">Void</button>`:''}</td></tr>`));
+ const pr=f.pays.concat(f.rf).sort((a,c)=>(a.date+a.time).localeCompare(c.date+c.time));
+ modalRes=id;
+ const body=`<div class="g2"><div><div class="row"><h3>${esc(g.name)}</h3>${g.vip?'<span class="chip brand">VIP</span>':''}${rsChip(r.status)}</div><div class="small muted">${esc(g.phone)}${g.email?' · '+esc(g.email):''}</div><div class="small muted">${g.idNo?'ID '+esc(g.idNo)+' · ':''}${esc(g.nationality)}${g.company?' · '+esc(g.company):''}</div></div>
+ <div class="small"><div><b>${r.code}</b> · room ${rm.no}, ${esc(ty.name)}</div><div>${fmtD(r.checkIn)} to ${fmtD(r.checkOut)} (${f.nights} night${f.nights>1?'s':''})</div><div class="muted">${r.adults} adult${r.adults>1?'s':''}${r.children?', '+r.children+' child'+(r.children>1?'ren':''):''} · ${esc(r.source)}${r.notes?' · '+esc(r.notes):''}</div></div></div>
+ <h4 class="mt">Charges</h4><div class="tw"><table class="t"><thead><tr><th>Date</th><th>Dept</th><th>Description</th><th class="num">Net</th><th class="num">Tax</th><th class="num">Gross</th><th></th></tr></thead><tbody>${lines.join('')||`<tr><td colspan="7"><div class="empty">No charges</div></td></tr>`}</tbody><tfoot><tr><td colspan="5">Total charges</td><td class="num">${money2(f.total)}</td><td></td></tr></tfoot></table></div>
+ <h4 class="mt">Payments</h4><div class="tw"><table class="t"><thead><tr><th>Date</th><th>Method</th><th>Reference</th><th>Note</th><th class="num">Amount</th></tr></thead><tbody>${pr.map(t=>`<tr><td>${fmtS(t.date)} ${t.time}</td><td>${esc(t.method)}${t.type==='refund'?' <span class="chip bad">Refund</span>':''}</td><td>${esc(t.ref)}</td><td>${esc(t.note)}</td><td class="num">${t.type==='refund'?'-':''}${money2(t.amount)}</td></tr>`).join('')||`<tr><td colspan="5"><div class="empty">No payments yet</div></td></tr>`}</tbody><tfoot><tr><td colspan="4">Paid</td><td class="num">${money2(f.paid)}</td></tr><tr><td colspan="4">Balance due</td><td class="num">${money2(f.balance)}</td></tr></tfoot></table></div>`;
+ openModal('Folio '+r.code,body,foot,true);modalRes=id;
+}
+A.openRes=el=>resModal(el.dataset.id);
+A.resEdit=el=>{const r=resv(el.dataset.id);closeModal();bookingModal({id:r.id})};
+
+/* ---------- check in / out / cancel ---------- */
+A.checkin=el=>{
+ const id=el.dataset.id,r=resv(id),rm=room(r.roomId),T=todayISO(),oc=inhouse(rm);
+ if(rm.ooo){toast('Room '+rm.no+' is out of order. Move the guest to another room first.','bad');return}
+ if(oc&&oc.id!==r.id){toast('Room '+rm.no+' still has '+guest(oc.guestId).name+' in house.','bad');return}
+ const warn=[];if(r.checkIn>T)warn.push('This arrival is dated '+fmtD(r.checkIn)+'. Checking in now bills from today.');if(rm.hk==='dirty')warn.push('Room '+rm.no+' is still marked dirty.');
+ const go=()=>{if(r.checkIn>T)r.checkIn=T;r.status='checked_in';r.actualIn=T+' '+nowTime();toast(guest(r.guestId).name+' checked in to room '+rm.no,'ok');closeModal();commit();if(f2(r))resModal(id)};
+ const f2=()=>false;
+ if(warn.length)confirmBox('Check in anyway?',warn.map(esc).join('<br>'),'Check in',go);else go();
+};
+A.checkout=el=>{
+ const id=el.dataset.id,r=resv(id),f=folio(r);
+ if(f.balance>0.5){pending=null;modalRes=null;openModal('Balance outstanding',`<p style="margin:0 0 8px">${esc(guest(r.guestId).name)} still owes <b>${money2(f.balance)}</b> on room ${room(r.roomId).no}.</p><p class="muted small" style="margin:0">Collect payment now, or bill it to an account and follow it up under Receivables.</p>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn" data-act="billAccount" data-id="${id}">Bill to account</button><button class="btn pri" data-act="pay" data-id="${id}" data-co="1">Take payment and check out</button>`);return}
+ doCheckout(id);
+};
+function doCheckout(id,bill){
+ const r=resv(id),rm=room(r.roomId),T=todayISO();
+ r.status='checked_out';r.actualOut=T+' '+nowTime();
+ if(T>r.checkIn&&T!==r.checkOut)r.checkOut=T;
+ if(bill)r.notes=(r.notes?r.notes+' · ':'')+'Balance billed to account';
+ rm.hk='dirty';rm.assignee='';closeModal();commit();toast('Checked out. Room '+rm.no+' is now dirty.','ok');
+}
+A.billAccount=el=>doCheckout(el.dataset.id,true);
+A.resCancel=el=>{
+ const r=resv(el.dataset.id),kind=el.dataset.kind||'cancel',f=folio(r);
+ pending={id:r.id,kind};modalRes=null;
+ openModal(kind==='noshow'?'Mark as no-show':'Cancel booking '+r.code,`<div class="frm">${f.paid>0.5?fld('Deposit held: '+money2(f.paid),sel('cx_opt',[['refund','Refund the full amount'],['retain','Keep it as a cancellation fee']],'refund'),'full'):''}${fld('Reason',inp('cx_reason',''),'full')}</div>`,`<button class="btn" data-act="closeModal">Keep booking</button><button class="btn danger" data-act="cancelGo">${kind==='noshow'?'Mark no-show':'Cancel booking'}</button>`);
+ pending={id:r.id,kind};
+};
+A.cancelGo=()=>{
+ const {id,kind}=pending,r=resv(id),f=folio(r),T=todayISO();
+ if(f.paid>0.5){
+  if(gv('cx_opt')==='retain'){const net=round2(f.paid/(1+S.settings.vat/100));S.txns.push({id:nextTxn(),resId:id,date:T,time:nowTime(),type:'charge',dept:'Other',method:'',net,tax:round2(f.paid-net),amount:f.paid,ref:'FEE'+rand(4),note:kind==='noshow'?'No-show fee (deposit retained)':'Cancellation fee (deposit retained)'})}
+  else{const by={};f.pays.forEach(t=>by[t.method]=(by[t.method]||0)+t.amount);f.rf.forEach(t=>by[t.method]=(by[t.method]||0)-t.amount);
+   Object.keys(by).forEach(m=>{if(by[m]>0.5){const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:T,time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:round2(by[m]),ref,note:'Refund on cancellation'});gw(m,'refund.succeeded',ref,by[m])}})}
+ }
+ r.status=kind==='noshow'?'no_show':'cancelled';const why=gv('cx_reason').trim();if(why)r.notes=(r.notes?r.notes+' · ':'')+why;
+ closeModal();commit();toast(kind==='noshow'?'Marked as no-show':'Booking cancelled','ok');
+};
+A.confirmYes=()=>{const f=pending;pending=null;closeModal();if(typeof f==='function')f()};
+A.closeModal=closeModal;
+
+/* ---------- charges ---------- */
+function postCharge(resId,dept,note,unit,qty,date){const n=round2(unit*qty),tax=vatOf(n);S.txns.push({id:nextTxn(),resId,date:date||todayISO(),time:nowTime(),type:'charge',dept,method:'',net:n,tax,amount:round2(n+tax),ref:'POS'+rand(4),note:qty>1?note+' x'+qty:note})}
+function chargeModal(id){
+ const items=[['','Custom charge'],...S.catalog.map(c=>[c.id,c.dept+' · '+c.name+' · '+money(c.price)])];
+ modalRes=null;
+ openModal('Post charge',`<div class="frm">${fld('Menu item',sel('ch_item',items,'','data-ch="chgItem"'),'full')}${fld('Department',sel('ch_dept',DEPTS,'F&B'))}${fld('Description',inp('ch_note',''))}${fld('Price each, excl. tax',inp('ch_price','','type="number" min="0" step="0.01"'))}${fld('Quantity',inp('ch_qty',1,'type="number" min="1"'))}<div class="full" id="ch_err"></div></div>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="chargeSave" data-id="${id}">Post charge</button>`);
+}
+CH.chgItem=el=>{const c=S.catalog.find(x=>x.id===el.value);if(c){$id('ch_dept').value=c.dept;$id('ch_note').value=c.name;$id('ch_price').value=c.price}};
+A.chargeNew=el=>chargeModal(el.dataset.id);
+A.chargeSave=el=>{const id=el.dataset.id,p=gn('ch_price'),q=Math.max(1,Math.round(gn('ch_qty'))),n=gv('ch_note').trim();
+ if(!n||p<=0){$id('ch_err').innerHTML='<div class="note bad">Enter a description and a price above zero.</div>';return}
+ postCharge(id,gv('ch_dept'),n,p,q);H.save();closeModal();render();resModal(id);toast('Charge posted','ok')};
+A.void=el=>{const id=el.dataset.id,t=el.dataset.t;S.txns=S.txns.filter(x=>x.id!==t);H.save();render();resModal(id);toast('Charge voided')};
+
+/* ---------- payments ---------- */
+function gw(provider,event,ref,amount){S.gateway.push({id:uid('gw'),ts:todayISO()+' '+nowTime(),provider:provider==='Card'?'Card gateway':provider==='M-Pesa'?'M-Pesa Daraja':provider,event,ref,amount:amount||0});if(S.gateway.length>200)S.gateway.shift()}
+function recordPayment(id,method,amount,ref,note){S.txns.push({id:nextTxn(),resId:id,date:todayISO(),time:nowTime(),type:'payment',dept:'',method,net:0,tax:0,amount:round2(amount),ref,note})}
+function payModal(id,o){
+ o=o||{};const r=resv(id),g=guest(r.guestId),f=folio(r);
+ if(!pay||pay.id!==id||o.fresh)pay={id,method:'M-Pesa',amount:Math.max(0,f.balance),phone:g.phone,co:!!o.co,stage:'form'};
+ if(o.co!=null&&o.fresh)pay.co=!!o.co;
+ Object.assign(pay,o.set||{});
+ modalRes=null;
+ if(pay.stage==='wait'){openModal('M-Pesa payment',`<div style="text-align:center"><div class="spin" role="status" aria-label="Waiting for guest"></div><p class="bold" style="margin:0">Prompt sent to ${esc(pay.phone)}</p><p class="muted" style="margin:6px 0 0">Waiting for the guest to enter their M-Pesa PIN for ${money2(pay.amount)}.</p></div><div class="note warn mt small">Simulation: choose what the guest does. A live integration receives this result from the Daraja callback on your server.</div>`,`<button class="btn" data-act="mpesaFail">Guest cancels</button><button class="btn pri" data-act="mpesaOk">Guest confirms</button>`);return}
+ if(pay.stage==='card'){openModal('Card payment',`<div style="text-align:center"><div class="spin" role="status" aria-label="Authorising card"></div><p class="bold" style="margin:0">Authorising ${money2(pay.amount)}</p></div>`,'');return}
+ const m=pay.method;let fields='';
+ if(m==='Cash')fields=fld('Cash received',inp('pay_tend',pay.tend||'','type="number" min="0" step="0.01" data-in="payTend"'))+`<div class="fld"><span>Change to give</span><div class="bold" id="pay_chg" style="padding:7px 0">${money2(0)}</div></div>`;
+ else if(m==='M-Pesa')fields=fld('Guest M-Pesa number',inp('pay_phone',pay.phone,'inputmode="tel"'),'full');
+ else if(m==='Card')fields=fld('Name on card',inp('pay_name',pay.name||g.name),'full')+fld('Card number',inp('pay_card','','inputmode="numeric" autocomplete="off" placeholder="4242 4242 4242 4242"'),'full')+fld('Expiry (MM/YY)',inp('pay_exp','','placeholder="08/29" autocomplete="off"'))+fld('CVC',inp('pay_cvc','','inputmode="numeric" maxlength="4" autocomplete="off"'));
+ else fields=fld('Bank reference',inp('pay_ref',pay.ref||''),'full');
+ const body=`<div class="note" style="margin-bottom:12px">Balance due <b>${money2(f.balance)}</b> on ${r.code}, room ${room(r.roomId).no}.</div><div class="pay-methods" role="group" aria-label="Payment method">${METHODS.map(x=>`<button class="pm" data-act="payMethod" data-m="${x}" aria-pressed="${m===x}">${x}</button>`).join('')}</div>
+ <div class="frm">${fld('Amount',inp('pay_amt',pay.amount,'type="number" min="0" step="0.01"'),'full')}${fields}<div class="full" id="pay_err"></div></div>
+ ${m==='Card'?'<p class="small muted" style="margin:10px 0 0">Simulation. Use 4242 4242 4242 4242 to approve or 4000 0000 0000 0002 to see a decline. Card numbers and CVC are never stored, only the last four digits.</p>':''}`;
+ openModal('Take payment',body,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="payGo">${m==='M-Pesa'?'Send M-Pesa prompt':m==='Card'?'Charge card':'Record payment'}</button>`);
+}
+A.pay=el=>payModal(el.dataset.id,{fresh:true,co:el.dataset.co==='1'});
+A.payMethod=el=>{const a=gn('pay_amt');payModal(pay.id,{set:{method:el.dataset.m,amount:a}})};
+IN.payTend=el=>{const c=$id('pay_chg');if(c)c.textContent=money2(Math.max(0,gn('pay_tend')-gn('pay_amt')))};
+function payDone(ref,method,note){
+ recordPayment(pay.id,method,pay.amount,ref,note);const id=pay.id,co=pay.co;pay=null;H.save();
+ if(co){doCheckout(id);toast('Payment received. Guest checked out.','ok')}else{render();resModal(id);toast('Payment of '+money2(S.txns[S.txns.length-1].amount)+' recorded','ok')}
+}
+A.payGo=()=>{
+ const f=folio(resv(pay.id)),amt=round2(gn('pay_amt')),err=m=>{$id('pay_err').innerHTML=`<div class="note bad">${esc(m)}</div>`},m=pay.method;
+ if(amt<=0)return err('Enter an amount above zero.');
+ if(amt>f.balance+0.5)return err('That is more than the balance due ('+money2(f.balance)+').');
+ pay.amount=amt;
+ if(m==='Cash'){const t=gn('pay_tend');if(t&&t<amt)return err('Cash received is less than the amount.');return payDone('CSH'+rand(4),'Cash',t>amt?'Change given '+money2(t-amt):'')}
+ if(m==='Bank'){const rf=gv('pay_ref').trim();if(!rf)return err('Enter the bank reference.');return payDone(rf,'Bank','Bank transfer')}
+ if(m==='M-Pesa'){let p=gv('pay_phone').replace(/[\s+\-]/g,'');if(/^0[71]\d{8}$/.test(p))p='254'+p.slice(1);if(!/^254[71]\d{8}$/.test(p))return err('Enter a valid Kenyan mobile number, like 0712 345 678.');
+  pay.phone=p;pay.stage='wait';gw('M-Pesa','stk.initiated','',amt);H.save();return payModal(pay.id)}
+ const num=gv('pay_card').replace(/\D/g,''),ex=gv('pay_exp').match(/^(0[1-9]|1[0-2])\s*\/?\s*(\d{2})$/),cvc=gv('pay_cvc');
+ if(!gv('pay_name').trim())return err('Enter the name on the card.');
+ let s=0,alt=false;for(let i=num.length-1;i>=0;i--){let d=+num[i];if(alt){d*=2;if(d>9)d-=9}s+=d;alt=!alt}
+ if(num.length<13||s%10!==0)return err('That card number is not valid.');
+ if(!ex)return err('Enter the expiry as MM/YY.');
+ const now=new Date();if(2000+ +ex[2]<now.getFullYear()||(2000+ +ex[2]===now.getFullYear()&&+ex[1]<now.getMonth()+1))return err('This card has expired.');
+ if(!/^\d{3,4}$/.test(cvc))return err('Enter the 3 or 4 digit CVC.');
+ const brand=/^4/.test(num)?'Visa':/^5[1-5]|^2[2-7]/.test(num)?'Mastercard':/^3[47]/.test(num)?'Amex':'Card',last=num.slice(-4),declined=num==='4000000000000002';
+ pay.stage='card';payModal(pay.id);
+ setTimeout(()=>{if(!pay)return;
+  if(declined){gw('Card','charge.declined','',amt);pay.stage='form';H.save();payModal(pay.id);$id('pay_err').innerHTML='<div class="note bad">The card was declined. Ask the guest for another card or use a different method.</div>';return}
+  const ref='AUTH'+rand(6);gw('Card','charge.succeeded',ref,amt);payDone(ref,'Card',brand+' •••• '+last)},1100);
+};
+A.mpesaOk=()=>{const ref='S'+Array.from({length:9},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*34)]).join('');gw('M-Pesa','stk.success',ref,pay.amount);payDone(ref,'M-Pesa','M-Pesa from '+pay.phone)};
+A.mpesaFail=()=>{gw('M-Pesa','stk.cancelled','',pay.amount);pay.stage='form';H.save();payModal(pay.id);$id('pay_err').innerHTML='<div class="note bad">The guest cancelled the prompt. No money was taken.</div>'};
+A.refund=el=>{
+ const id=el.dataset.id,f=folio(resv(id)),by={};f.pays.forEach(t=>by[t.method]=(by[t.method]||0)+t.amount);f.rf.forEach(t=>by[t.method]=(by[t.method]||0)-t.amount);
+ const ms=Object.keys(by).filter(m=>by[m]>0.5);modalRes=null;
+ if(!ms.length){toast('There is nothing left to refund on this folio','bad');return}
+ openModal('Refund',`<div class="frm">${fld('Refund to',sel('rf_m',ms.map(m=>[m,m+' (up to '+money2(by[m])+')']),ms[0]),'full')}${fld('Amount',inp('rf_amt',by[ms[0]],'type="number" min="0" step="0.01"'))}${fld('Reason',inp('rf_reason',''))}<div class="full" id="rf_err"></div></div>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn danger" data-act="refundGo" data-id="${id}">Issue refund</button>`);
+ pending=by;
+};
+A.refundGo=el=>{const by=pending,id=el.dataset.id,m=gv('rf_m'),a=round2(gn('rf_amt'));
+ if(a<=0||a>by[m]+0.01){$id('rf_err').innerHTML=`<div class="note bad">Enter an amount between 0 and ${money2(by[m])}.</div>`;return}
+ const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:todayISO(),time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:a,ref,note:gv('rf_reason')||'Refund'});gw(m,'refund.succeeded',ref,a);
+ pending=null;H.save();render();resModal(id);toast('Refund of '+money2(a)+' recorded','ok')};
+A.invoice=el=>{
+ const r=resv(el.dataset.id),g=guest(r.guestId),rm=room(r.roomId),f=folio(r),s=S.settings,ty=typeOf(rm.typeId);
+ const rows=[];if(f.roomNet>0)rows.push([fmtS(r.checkIn)+' to '+fmtS(r.checkOut),ty.name+', room '+rm.no+': '+f.nights+' night(s) at '+money2(r.rate),f.roomNet,f.roomTax,f.roomGross]);
+ f.charges.forEach(t=>rows.push([fmtS(t.date),t.note,t.net,t.tax,t.amount]));
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>Invoice ${r.code}</title><style>body{font:14px/1.5 system-ui,Arial,sans-serif;color:#13222B;max-width:800px;margin:32px auto;padding:0 20px}h1{margin:0}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{padding:8px;border-bottom:1px solid #ddd;text-align:left}th.n,td.n{text-align:right}.tot td{font-weight:700;border-top:2px solid #13222B}.mut{color:#5B6C75}</style></head><body><h1>${esc(s.hotel)}</h1><div class="mut">Tax invoice${s.taxPin?' · PIN '+esc(s.taxPin):''}</div><hr>
+<p><b>Invoice for ${esc(g.name)}</b>${g.company?'<br>'+esc(g.company):''}<br>Reservation ${r.code} · room ${rm.no}<br>${fmtD(r.checkIn)} to ${fmtD(r.checkOut)}<br>Issued ${fmtD(todayISO())}</p>
+<table><thead><tr><th>Date</th><th>Description</th><th class="n">Net</th><th class="n">VAT ${s.vat}%</th><th class="n">Total</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td><td class="n">${money2(x[2])}</td><td class="n">${money2(x[3])}</td><td class="n">${money2(x[4])}</td></tr>`).join('')}</tbody>
+<tfoot><tr class="tot"><td colspan="4">Total</td><td class="n">${money2(f.total)}</td></tr><tr><td colspan="4">Paid</td><td class="n">${money2(f.paid)}</td></tr><tr class="tot"><td colspan="4">Balance due</td><td class="n">${money2(f.balance)}</td></tr></tfoot></table><p class="mut">Thank you for staying with us.</p></body></html>`;
+ saveFile('Invoice-'+r.code+'.html',html);
+};
+
+/* ---------- guests ---------- */
+function guestForm(g){g=g||{};return `<div class="frm">${fld('Full name',inp('g_name',g.name||''))}${fld('Phone',inp('g_phone',g.phone||'','inputmode="tel"'))}${fld('Email',inp('g_email',g.email||'','type="email"'))}${fld('ID or passport',inp('g_id',g.idNo||''))}${fld('Nationality',inp('g_nat',g.nationality||'Kenya'))}${fld('Company',inp('g_co',g.company||''))}${fld('VIP',sel('g_vip',[['no','No'],['yes','Yes']],g.vip?'yes':'no'))}${fld('Notes',inp('g_notes',g.notes||''))}<div class="full" id="g_err"></div></div>`}
+A.guestNew=()=>{modalRes=null;openModal('Add guest',guestForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="guestSave">Save guest</button>`)};
+A.guestSave=el=>{const id=el&&el.dataset.id,n=gv('g_name').trim();if(!n){$id('g_err').innerHTML='<div class="note bad">Enter the guest name.</div>';return}
+ const d={name:n,phone:gv('g_phone').trim(),email:gv('g_email').trim(),idNo:gv('g_id').trim(),nationality:gv('g_nat').trim(),company:gv('g_co').trim(),vip:gv('g_vip')==='yes',notes:gv('g_notes')};
+ if(id)Object.assign(guest(id),d);else S.guests.push(Object.assign({id:uid('g')},d));closeModal();commit();toast('Guest saved','ok')};
+A.guestEdit=el=>{const g=guest(el.dataset.id);modalRes=null;openModal('Edit guest',guestForm(g),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="guestSave" data-id="${g.id}">Save guest</button>`)};
+A.guestOpen=el=>{const g=guest(el.dataset.id),rs=S.res.filter(r=>r.guestId===g.id).sort((a,b)=>b.checkIn.localeCompare(a.checkIn)),spend=sum(rs.filter(r=>r.status==='checked_in'||r.status==='checked_out'),r=>folio(r).total);modalRes=null;
+ openModal(g.name,`<div class="small muted">${esc(g.phone)} · ${esc(g.email)}<br>${g.idNo?'ID '+esc(g.idNo)+' · ':''}${esc(g.nationality)}${g.company?' · '+esc(g.company):''}${g.notes?'<br>'+esc(g.notes):''}</div><div class="kpis mt" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><small>Stays</small><b>${rs.filter(r=>r.status==='checked_out'||r.status==='checked_in').length}</b></div><div class="kpi"><small>Lifetime spend</small><b>${money(spend)}</b></div></div>
+ <h4 class="mt">History</h4><div class="tw"><table class="t"><tbody>${rs.map(r=>`<tr class="click" data-act="openRes" data-id="${r.id}"><td class="bold">${r.code}</td><td>${fmtS(r.checkIn)} to ${fmtS(r.checkOut)}</td><td>Room ${room(r.roomId).no}</td><td>${rsChip(r.status)}</td><td class="num">${money(folio(r).total)}</td></tr>`).join('')||`<tr><td>${X.empty('No stays yet')}</td></tr>`}</tbody></table></div>`,`<button class="btn" data-act="guestEdit" data-id="${g.id}">Edit</button><button class="btn pri" data-act="guestBook" data-id="${g.id}">New booking</button>`,true)};
+A.guestBook=el=>{closeModal();bookingModal({guestId:el.dataset.id})};
+
+/* ---------- rooms and types ---------- */
+function typeForm(t){t=t||{};return `<div class="frm">${fld('Name',inp('t_name',t.name||''))}${fld('Code',inp('t_code',t.code||'','maxlength="4"'))}${fld('Base rate per night, excl. tax',inp('t_rate',t.rate||'','type="number" min="0"'))}${fld('Sleeps',inp('t_cap',t.cap||2,'type="number" min="1"'))}${fld('Beds',inp('t_beds',t.beds||''))}${fld('Amenities',inp('t_amen',t.amen||''))}<div class="full" id="t_err"></div></div>`}
+A.typeNew=()=>{modalRes=null;openModal('Add room type',typeForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="typeSave">Save</button>`)};
+A.typeEdit=el=>{const t=typeOf(el.dataset.id);modalRes=null;openModal('Edit room type',typeForm(t)+'<p class="small muted" style="margin:10px 0 0">A new base rate applies to bookings made from now on. Existing bookings keep their agreed rate.</p>',`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="typeSave" data-id="${t.id}">Save</button>`)};
+A.typeSave=el=>{const id=el&&el.dataset.id,n=gv('t_name').trim(),rate=gn('t_rate');if(!n||rate<=0){$id('t_err').innerHTML='<div class="note bad">Enter a name and a base rate above zero.</div>';return}
+ const d={name:n,code:gv('t_code').trim().toUpperCase()||n.slice(0,3).toUpperCase(),rate,cap:Math.max(1,gn('t_cap')),beds:gv('t_beds'),amen:gv('t_amen')};
+ if(id)Object.assign(typeOf(id),d);else S.types.push(Object.assign({id:uid('t')},d));closeModal();commit();toast('Room type saved','ok')};
+function roomForm(r){r=r||{};return `<div class="frm">${fld('Room number',inp('rm_no',r.no||''))}${fld('Floor',inp('rm_fl',r.floor||1,'type="number" min="0"'))}${fld('Type',sel('rm_type',S.types.map(t=>[t.id,t.name]),r.typeId||S.types[0].id),'full')}<div class="full" id="rm_err"></div></div>`}
+A.roomNew=()=>{modalRes=null;openModal('Add room',roomForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="roomSave">Save</button>`)};
+A.roomEdit=el=>{const r=room(el.dataset.id);modalRes=null;openModal('Edit room '+r.no,roomForm(r),`<button class="btn danger" data-act="roomDel" data-id="${r.id}">Delete room</button><button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="roomSave" data-id="${r.id}">Save</button>`)};
+A.roomSave=el=>{const id=el&&el.dataset.id,no=gv('rm_no').trim();if(!no){$id('rm_err').innerHTML='<div class="note bad">Enter a room number.</div>';return}
+ if(S.rooms.some(r=>r.no===no&&r.id!==id)){$id('rm_err').innerHTML='<div class="note bad">That room number already exists.</div>';return}
+ const d={no,floor:Math.round(gn('rm_fl')),typeId:gv('rm_type')};if(id)Object.assign(room(id),d);else S.rooms.push(Object.assign({id:uid('rm'),hk:'clean',ooo:false,oooReason:'',assignee:''},d));
+ S.rooms.sort((a,b)=>a.no.localeCompare(b.no,undefined,{numeric:true}));closeModal();commit();toast('Room saved','ok')};
+A.roomDel=el=>{const r=room(el.dataset.id);if(S.res.some(x=>x.roomId===r.id)){toast('Room '+r.no+' has reservation history and cannot be deleted. Take it out of order instead.','bad');return}
+ confirmBox('Delete room '+r.no+'?','This removes the room from the property.','Delete',()=>{S.rooms=S.rooms.filter(x=>x.id!==r.id);commit()},true)};
+A.roomOoo=el=>{const r=room(el.dataset.id);
+ if(r.ooo){r.ooo=false;r.oooReason='';r.hk='dirty';setAvailability(r.id,todayISO(),addDays(todayISO(),365),true,'');S.tasks.forEach(t=>{if(t.roomId===r.id&&t.blocks&&t.status!=='Done')t.status='Done'});commit();toast('Room '+r.no+' is back in service and needs cleaning','ok');return}
+ if(inhouse(r)){toast('Room '+r.no+' has a guest in house. Move them first.','bad');return}
+ modalRes=null;openModal('Take room '+r.no+' out of order',fld('Reason',inp('oo_reason','','placeholder="e.g. AC fault"'))+'<div id="oo_err"></div>',`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="oooSave" data-id="${r.id}">Take out of order</button>`)};
+A.oooSave=el=>{const r=room(el.dataset.id),why=gv('oo_reason').trim();if(!why){$id('oo_err').innerHTML='<div class="note bad mt">Enter a reason.</div>';return}
+ r.ooo=true;r.oooReason=why;setAvailability(r.id,todayISO(),addDays(todayISO(),365),false,why);S.tasks.push({id:uid('w'),roomId:r.id,area:'',title:why,priority:'High',status:'Open',assignee:'',created:todayISO(),blocks:true,notes:''});closeModal();commit();toast('Room '+r.no+' is out of order. A work order was opened.')};
+
+/* ---------- housekeeping and maintenance ---------- */
+A.hkFilter=el=>{ui.hk=el.dataset.k;render()};
+A.hkSet=el=>{room(el.dataset.id).hk=el.dataset.s;commit()};
+CH.hkAssignee=el=>{room(el.dataset.id).assignee=el.value;H.save()};
+A.hkAssign=()=>{const st=S.staff.filter(s=>s.role==='Housekeeping'&&s.active);if(!st.length){toast('Add active housekeeping staff first','bad');return}
+ let i=0,n=0;S.rooms.filter(r=>roomState(r)==='dirty'&&!r.assignee).forEach(r=>{r.assignee=st[i++%st.length].id;n++});commit();toast(n?n+' rooms assigned':'Every dirty room already has an attendant','ok')};
+A.woFilter=el=>{ui.wo=el.dataset.k;render()};
+A.woNew=()=>{modalRes=null;const ms=S.staff.filter(s=>s.role==='Maintenance'&&s.active);
+ openModal('New work order',`<div class="frm">${fld('Issue',inp('w_title',''),'full')}${fld('Room',sel('w_room',[['','No room (general area)'],...S.rooms.map(r=>[r.id,'Room '+r.no])],''))}${fld('Area, if no room',inp('w_area',''))}${fld('Priority',sel('w_pri',['Low','Medium','High','Urgent'],'Medium'))}${fld('Assign to',sel('w_who',[['','Unassigned'],...ms.map(s=>[s.id,s.name])],''))}${fld('Take room out of order?',sel('w_blk',[['no','No'],['yes','Yes']],'no'),'full')}${fld('Notes',inp('w_notes',''),'full')}<div class="full" id="w_err"></div></div>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="woSave">Create work order</button>`)};
+A.woSave=()=>{const t=gv('w_title').trim(),rid=gv('w_room'),blk=gv('w_blk')==='yes'&&rid,err=m=>{$id('w_err').innerHTML=`<div class="note bad">${esc(m)}</div>`};
+ if(!t)return err('Describe the issue.');if(!rid&&!gv('w_area').trim())return err('Pick a room or enter an area.');
+ if(blk&&inhouse(room(rid)))return err('That room has a guest in house. Move them first.');
+ S.tasks.push({id:uid('w'),roomId:rid||null,area:gv('w_area').trim(),title:t,priority:gv('w_pri'),status:'Open',assignee:gv('w_who'),created:todayISO(),blocks:!!blk,notes:gv('w_notes')});
+ if(blk){const r=room(rid);r.ooo=true;r.oooReason=t;setAvailability(r.id,todayISO(),addDays(todayISO(),365),false,t)}closeModal();commit();toast('Work order created','ok')};
+A.woStatus=el=>{const t=S.tasks.find(x=>x.id===el.dataset.id);t.status=el.dataset.s;
+ if(t.status==='Done'&&t.blocks&&t.roomId){const r=room(t.roomId);if(r&&!S.tasks.some(x=>x.id!==t.id&&x.roomId===t.roomId&&x.blocks&&x.status!=='Done')){r.ooo=false;r.oooReason='';r.hk='dirty';setAvailability(r.id,todayISO(),addDays(todayISO(),365),true,'')}}
+ commit()};
+A.woDel=el=>{S.tasks=S.tasks.filter(x=>x.id!==el.dataset.id);commit()};
+
+/* ---------- point of sale ---------- */
+A.posAdd=el=>{const c=ui.pos.cart;c[el.dataset.id]=(c[el.dataset.id]||0)+1;render()};
+A.posQty=el=>{const c=ui.pos.cart,k=el.dataset.id;c[k]=(c[k]||0)+(+el.dataset.d);if(c[k]<=0)delete c[k];render()};
+A.posClear=()=>{ui.pos.cart={};render()};
+CH.posRes=el=>{ui.pos.resId=el.value;render()};
+A.posPost=()=>{const id=ui.pos.resId,items=Object.keys(ui.pos.cart);if(!id||!items.length)return;
+ items.forEach(k=>{const c=S.catalog.find(x=>x.id===k);if(c)postCharge(id,c.dept,c.name,c.price,ui.pos.cart[k])});
+ const r=resv(id);ui.pos.cart={};commit();toast('Posted to room '+room(r.roomId).no+' folio','ok')};
+A.posCustom=()=>{if(ui.pos.resId)chargeModal(ui.pos.resId)};
+
+/* ---------- inventory, staff, expenses ---------- */
+A.invNew=()=>{modalRes=null;openModal('Add stock item',`<div class="frm">${fld('Item',inp('i_name',''),'full')}${fld('Category',inp('i_cat','Cleaning'))}${fld('Unit',inp('i_unit','pcs'))}${fld('On hand',inp('i_qty',0,'type="number" min="0"'))}${fld('Reorder level',inp('i_re',10,'type="number" min="0"'))}${fld('Unit cost',inp('i_cost',0,'type="number" min="0"'))}<div class="full" id="i_err"></div></div>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="invSave">Save item</button>`)};
+A.invSave=()=>{const n=gv('i_name').trim();if(!n){$id('i_err').innerHTML='<div class="note bad">Enter the item name.</div>';return}
+ S.inventory.push({id:uid('i'),name:n,category:gv('i_cat'),unit:gv('i_unit'),qty:gn('i_qty'),reorder:gn('i_re'),cost:gn('i_cost')});closeModal();commit()};
+function qtyModal(id,mode){const i=S.inventory.find(x=>x.id===id);modalRes=null;openModal((mode==='use'?'Use ':'Receive ')+i.name,`<div class="frm">${fld('Quantity ('+i.unit+')',inp('q_qty',1,'type="number" min="1"'))}${mode==='recv'?fld('Unit cost',inp('q_cost',i.cost,'type="number" min="0"')):''}<div class="full" id="q_err"></div></div><p class="small muted">On hand now: ${i.qty} ${esc(i.unit)}</p>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="qtyGo" data-id="${id}" data-mode="${mode}">${mode==='use'?'Issue stock':'Receive stock'}</button>`)}
+A.invUse=el=>qtyModal(el.dataset.id,'use');A.invRecv=el=>qtyModal(el.dataset.id,'recv');
+A.qtyGo=el=>{const i=S.inventory.find(x=>x.id===el.dataset.id),q=gn('q_qty');if(q<=0)return;
+ if(el.dataset.mode==='use'){if(q>i.qty){$id('q_err').innerHTML='<div class="note bad">Only '+i.qty+' on hand.</div>';return}i.qty-=q}else{i.qty+=q;if(gn('q_cost')>0)i.cost=gn('q_cost')}closeModal();commit()};
+A.invDel=el=>{confirmBox('Remove this item?','It will be deleted from stock records.','Remove',()=>{S.inventory=S.inventory.filter(x=>x.id!==el.dataset.id);commit()},true)};
+function staffForm(s){s=s||{};return `<div class="frm">${fld('Full name',inp('sf_name',s.name||''))}${fld('Phone',inp('sf_phone',s.phone||''))}${fld('Role',sel('sf_role',['Front desk','Housekeeping','Maintenance','F&B','Security','Management'],s.role||'Front desk'))}${fld('Shift',sel('sf_shift',['Morning','Evening','Night'],s.shift||'Morning'))}<div class="full" id="sf_err"></div></div>`}
+A.staffNew=()=>{modalRes=null;openModal('Add staff member',staffForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="staffSave">Save</button>`)};
+A.staffEdit=el=>{modalRes=null;openModal('Edit staff member',staffForm(staffOf(el.dataset.id)),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="staffSave" data-id="${el.dataset.id}">Save</button>`)};
+A.staffSave=el=>{const id=el&&el.dataset.id,n=gv('sf_name').trim();if(!n){$id('sf_err').innerHTML='<div class="note bad">Enter the name.</div>';return}
+ const d={name:n,phone:gv('sf_phone'),role:gv('sf_role'),shift:gv('sf_shift')};if(id)Object.assign(staffOf(id),d);else S.staff.push(Object.assign({id:uid('st'),active:true},d));closeModal();commit()};
+A.staffToggle=el=>{const s=staffOf(el.dataset.id);s.active=!s.active;commit()};
+A.expNew=()=>{modalRes=null;openModal('Record expense',`<div class="frm">${fld('Date',inp('x_date',todayISO(),'type="date"'))}${fld('Category',sel('x_cat',EXP_CATS,'Supplies & consumables'))}${fld('Vendor or payee',inp('x_vendor',''))}${fld('Amount',inp('x_amt','','type="number" min="0" step="0.01"'))}${fld('Paid via',sel('x_method',['Bank','Cash','M-Pesa'],'Bank'))}${fld('Reference or note',inp('x_note',''))}<div class="full" id="x_err"></div></div>`,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="expSave">Save expense</button>`)};
+A.expSave=()=>{const a=round2(gn('x_amt'));if(a<=0||!gv('x_vendor').trim()){$id('x_err').innerHTML='<div class="note bad">Enter who was paid and an amount above zero.</div>';return}
+ S.expenses.push({id:uid('e'),date:gv('x_date')||todayISO(),category:gv('x_cat'),vendor:gv('x_vendor').trim(),amount:a,method:gv('x_method'),ref:'EXP'+rand(4),note:gv('x_note')});closeModal();commit();toast('Expense recorded','ok')};
+A.expDel=el=>{confirmBox('Delete this expense?','It will be removed from your statements.','Delete',()=>{S.expenses=S.expenses.filter(x=>x.id!==el.dataset.id);commit()},true)};
+
+/* ---------- settings ---------- */
+A.setSave=()=>{const s=S.settings;
+ if($id('s_hotel')){s.hotel=gv('s_hotel').trim()||s.hotel;s.currency=gv('s_cur').trim().toUpperCase()||s.currency;s.vat=Math.max(0,gn('s_vat'));s.taxPin=gv('s_pin');s.checkInTime=gv('s_in');s.checkOutTime=gv('s_out');s.openingCash=gn('s_open');const src=gv('s_src').split(',').map(x=>x.trim()).filter(Boolean);if(src.length)s.sources=src}
+ if($id('s_menv')){s.mpesaEnv=gv('s_menv');s.mpesaShort=gv('s_mshort');s.mpesaCallback=gv('s_mcb');s.cardProvider=gv('s_cprov');s.cardKey=gv('s_ckey')}
+ commit();toast('Settings saved','ok')};
+function planForm(p){p=p||{};return `<div class="frm">${fld('Plan name',inp('pl_name',p.name||''),'full')}${fld('Price as % of rack rate',inp('pl_mult',Math.round((p.mult||1)*100),'type="number" min="1" max="300"'),'full')}</div>`}
+A.planNew=()=>{modalRes=null;openModal('Add rate plan',planForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="planSave">Save</button>`)};
+A.planEdit=el=>{modalRes=null;openModal('Edit rate plan',planForm(planOf(el.dataset.id)),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="planSave" data-id="${el.dataset.id}">Save</button>`)};
+A.planSave=el=>{const id=el&&el.dataset.id,n=gv('pl_name').trim();if(!n)return;const d={name:n,mult:Math.max(.01,gn('pl_mult')/100)};if(id)Object.assign(planOf(id),d);else S.plans.push(Object.assign({id:uid('p')},d));closeModal();commit()};
+A.planDel=el=>{if(S.res.some(r=>r.planId===el.dataset.id)){toast('This plan is used by reservations. Edit it instead.','bad');return}S.plans=S.plans.filter(p=>p.id!==el.dataset.id);commit()};
+function catForm(c){c=c||{};return `<div class="frm">${fld('Item name',inp('c_name',c.name||''),'full')}${fld('Department',sel('c_dept',DEPTS.filter(d=>d!=='Rooms'),c.dept||'F&B'))}${fld('Price, excl. tax',inp('c_price',c.price||'','type="number" min="0"'))}</div>`}
+A.catNew=()=>{modalRes=null;openModal('Add menu item',catForm(),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="catSave">Save</button>`)};
+A.catEdit=el=>{modalRes=null;openModal('Edit menu item',catForm(S.catalog.find(c=>c.id===el.dataset.id)),`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="catSave" data-id="${el.dataset.id}">Save</button>`)};
+A.catSave=el=>{const id=el&&el.dataset.id,n=gv('c_name').trim();if(!n||gn('c_price')<0)return;const d={name:n,dept:gv('c_dept'),price:gn('c_price')};if(id)Object.assign(S.catalog.find(c=>c.id===id),d);else S.catalog.push(Object.assign({id:uid('c')},d));closeModal();commit()};
+A.catDel=el=>{S.catalog=S.catalog.filter(c=>c.id!==el.dataset.id);ui.pos.cart={};commit()};
+A.backup=()=>saveFile('hotel-backup-'+todayISO()+'.json',JSON.stringify(S,null,2));
+A.resetDemo=()=>confirmBox('Reload demo data?','This replaces everything in this browser with sample data.','Reload',()=>{H.seed();H.save();sync();ui.pos={resId:'',cart:{}};render();toast('Demo data loaded','ok')},true);
+A.clearOps=()=>toast('Operational data deletion is disabled. Use the audited retention workflow in the API.','bad');
+
+/* ---------- csv ---------- */
+A.csv=el=>{const w=el.dataset.what,T=todayISO(),{from,to}=ui.range;let rows=[],name=w;
+ if(w==='reservations'){rows=[['Code','Guest','Room','Check-in','Check-out','Nights','Status','Source','Rate','Total','Paid','Balance']].concat(S.res.map(r=>{const f=folio(r);return[r.code,guest(r.guestId).name,room(r.roomId).no,r.checkIn,r.checkOut,f.nights,r.status,r.source,r.rate,f.total,f.paid,f.balance]}))}
+ else if(w==='guests')rows=[['Name','Phone','Email','ID','Nationality','Company','VIP']].concat(S.guests.map(g=>[g.name,g.phone,g.email,g.idNo,g.nationality,g.company,g.vip?'Yes':'No']));
+ else if(w==='expenses')rows=[['Date','Category','Vendor','Method','Amount','Reference','Note']].concat(S.expenses.filter(e=>e.date>=from&&e.date<=to).map(e=>[e.date,e.category,e.vendor,e.method,e.amount,e.ref,e.note]));
+ else if(w==='transactions')rows=[['Date','Time','Reference','Type','Dept or method','Guest','Room','Reservation','Net','Tax','Gross']].concat(X.txRows().map(x=>[x.date,x.time,x.ref,x.type,x.type==='charge'?x.dept:x.method,x.guest,x.room,x.code,x.type==='charge'?x.net:'',x.type==='charge'?x.tax:'',(x.type==='refund'?-1:1)*x.amount]));
+ else if(w==='daily')rows=[['Date','Available','Sold','Occupancy %','ADR','RevPAR','Room revenue','Other revenue','Total']].concat(dayStats(from,to).map(d=>[d.date,d.avail,d.sold,Math.round(d.occ*100),Math.round(d.adr),Math.round(d.revpar),d.roomRev,d.other,d.total]));
+ else if(w==='receivables')rows=[['Code','Guest','Company','Check-out','Balance']].concat(receivables().map(x=>[x.r.code,guest(x.r.guestId).name,guest(x.r.guestId).company,x.r.checkOut,x.f.balance]));
+ else if(w==='statement'){const st=X.statementRows();name=ui.stmt;rows=[[st.title,st.sub],['',...st.cols]].concat(st.rows.map(r=>r.slice(0,-1).map(v=>v==null?'':(typeof v==='number'?Math.round(v*100)/100:v))))}
+ saveFile('hotel-'+name+'-'+T+'.csv',toCSV(rows));
+};
+
+/* ---------- navigation and generic handlers ---------- */
+A.go=el=>{ui.view=el.dataset.v;ui.navOpen=false;ui.limit=50;render();window.scrollTo(0,0)};
+A.navToggle=()=>{ui.navOpen=!ui.navOpen;render()};A.navClose=()=>{ui.navOpen=false;render()};
+A.newBooking=()=>bookingModal();A.walkin=()=>bookingModal({checkIn:todayISO()});
+A.preset=el=>{setPreset(el.dataset.p);render()};
+CH.range=()=>{let f=gv('rf'),t=gv('rt');if(!f||!t)return;if(f>t)[f,t]=[t,f];ui.range={preset:'custom',from:f,to:t};render()};
+IN.q=el=>{ui.q=el.value;ui.limit=50;render()};IN.gq=el=>{ui.gq=el.value;render()};IN.txQ=el=>{ui.txQ=el.value;render()};
+CH.fs=el=>{ui.status=el.value;ui.limit=50;render()};CH.fsrc=el=>{ui.source=el.value;ui.limit=50;render()};
+CH.rmType=el=>{ui.rmType=el.value;render()};CH.rmFloor=el=>{ui.rmFloor=el.value;render()};CH.rmState=el=>{ui.rmState=el.value;render()};
+CH.txType=el=>{ui.txType=el.value;render()};CH.expCat=el=>{ui.expCat=el.value;render()};
+A.more=()=>{ui.limit+=50;render()};
+A.tapeNew=el=>bookingModal({roomId:el.dataset.room,checkIn:el.dataset.date,checkOut:addDays(el.dataset.date,1)});
+A.tapeMove=el=>{ui.tapeStart=addDays(ui.tapeStart,+el.dataset.d);render()};A.tapeToday=()=>{ui.tapeStart=addDays(todayISO(),-2);render()};A.tapeDays=el=>{ui.tapeDays=+el.dataset.n;render()};
+A.cashTab=el=>{ui.cashTab=el.dataset.k;render()};A.stmtTab=el=>{ui.stmt=el.dataset.k;render()};A.rptTab=el=>{ui.rpt=el.dataset.k;render()};A.setTab=el=>{ui.setTab=el.dataset.k;render()};
+function applyTheme(t){const r=document.documentElement;if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme')}
+A.theme=()=>{let t='auto';try{t=localStorage.getItem('hms.theme')||'auto'}catch(e){}const n=t==='auto'?'dark':t==='dark'?'light':'auto';try{localStorage.setItem('hms.theme',n)}catch(e){}applyTheme(n);toast('Theme: '+n)};
+
+document.addEventListener('click',e=>{
+ if(e.target===$('#modal')){closeModal();return}
+ const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(f){e.preventDefault();try{f(el,e)}catch(err){console.error(err);toast('Something went wrong: '+err.message,'bad')}}});
+document.addEventListener('input',e=>{const el=e.target.closest('[data-in]');if(el&&IN[el.dataset.in])IN[el.dataset.in](el,e)});
+document.addEventListener('change',e=>{const el=e.target.closest('[data-ch]');if(el&&CH[el.dataset.ch])CH[el.dataset.ch](el,e)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOpen())closeModal()});
+H.load();sync();try{applyTheme(localStorage.getItem('hms.theme')||'auto')}catch(e){}
+render();
+window.__A={A,resModal,bookingModal,payModal,render,closeModal};
+})();
+</script></body></html>
