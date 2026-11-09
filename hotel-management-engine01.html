@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hotel Management Engine</title>
+<title>Savanna Crest Hotel | Operations</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -195,7 +195,7 @@ table.t tfoot td{font-weight:600;border-top:2px solid var(--line);border-bottom:
  <aside class="side" id="side" aria-label="Main navigation">
   <div class="brand">
    <svg class="mark" viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="2" width="30" height="32" rx="7" fill="#B0802A"/><circle cx="18" cy="11" r="3.4" fill="#10242B"/><path d="M18 14.5v14M18 21h5M18 26h4" stroke="#10242B" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>
-   <div><b id="hname">Hotel</b><small>Management engine</small></div>
+   <div><b id="hname">Savanna Crest Hotel</b><small>Hotel operations</small></div>
   </div>
   <nav id="nav"></nav>
   <div class="sidefoot" id="bdate"></div>
@@ -243,11 +243,10 @@ const pct=n=>(isFinite(n)?Math.round(n*100):0)+'%';
 
 /* ---------- seed data ---------- */
 function seed(){
- const R=rng(7331),ri=(a,b)=>a+Math.floor(R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
  const T=todayISO();
- const settings={hotel:'Savannah Crest Hotel',currency:'KES',vat:16,checkInTime:'14:00',checkOutTime:'10:00',openingCash:2000000,taxPin:'',
+ const settings={hotel:'Savanna Crest Hotel',currency:'KES',vat:16,checkInTime:'14:00',checkOutTime:'10:00',openingCash:0,taxPin:'',
   sources:['Direct','Walk-in','Phone','Booking.com','Expedia','Corporate','Travel agent'],
-  mpesaEnv:'sandbox',mpesaShort:'174379',mpesaCallback:'',cardProvider:'Stripe',cardKey:''};
+  mpesaEnv:'sandbox',mpesaShort:'',mpesaCallback:'',cardProvider:'',cardKey:''};
  const types=[
   {id:'t_sgl',code:'SGL',name:'Standard Single',rate:6500,cap:1,beds:'1 single',amen:'WiFi, TV, Desk, En-suite'},
   {id:'t_dbl',code:'DBL',name:'Standard Double',rate:8500,cap:2,beds:'1 double',amen:'WiFi, TV, Desk, En-suite'},
@@ -258,88 +257,18 @@ function seed(){
  const rooms=[];
  layout.forEach(([fl,parts])=>{let k=0;parts.forEach(([t,n])=>{for(let i=0;i<n;i++){k++;rooms.push({id:'rm'+(fl*100+k),no:String(fl*100+k),floor:fl,typeId:t,hk:'clean',ooo:false,oooReason:'',assignee:''})}})});
  const plans=[{id:'p_rack',name:'Rack rate',mult:1},{id:'p_corp',name:'Corporate',mult:.85},{id:'p_adv',name:'Advance purchase',mult:.9},{id:'p_long',name:'Long stay (5+ nights)',mult:.8}];
- const staff=[['Grace Wambui','Front desk','Morning'],['Peter Otieno','Front desk','Evening'],['Lydia Achieng','Front desk','Night'],['Mary Njeri','Housekeeping','Morning'],['Faith Chebet','Housekeeping','Morning'],['Joyce Atieno','Housekeeping','Morning'],['Samuel Kiptoo','Maintenance','Morning'],['David Mutua','Security','Night'],['Hassan Ali','F&B','Morning'],['Irene Wafula','Management','Morning']].map((s,i)=>({id:'st'+(i+1),name:s[0],role:s[1],shift:s[2],phone:'+2547'+ri(10000000,29999999),active:true}));
- const fn=['Wanjiru','Otieno','Achieng','Kamau','Njeri','Kiplagat','Chebet','Odhiambo','Amina','Hassan','Fatuma','Mutua','Wairimu','Barasa','Naliaka','Sarah','James','Emily','Daniel','Priya','Chen','Lars','Marta','Ahmed','Grace','Brian','Faith','Kevin','Linet','Peter'];
- const ln=['Mwangi','Otieno','Kariuki','Wekesa','Njoroge','Omondi','Kimani','Rotich','Abdi','Wafula','Mutiso','Smith','Patel','Nguyen','Johansson','Rossi','Khan','Brown','Kilonzo','Gathogo'];
- const guests=[];
- for(let i=0;i<44;i++){const a=pick(fn),b=pick(ln);const foreign=['Smith','Patel','Nguyen','Johansson','Rossi','Khan','Brown'].includes(b);
-  guests.push({id:'g'+(i+1),name:a+' '+b,phone:'+2547'+ri(10000000,29999999),email:(a+'.'+b).toLowerCase()+'@example.com',idNo:String(ri(20000000,39999999)),nationality:foreign?pick(['United Kingdom','India','Vietnam','Sweden','Italy','Pakistan','Canada']):'Kenya',company:R()<.2?pick(['Safaricom PLC','KCB Group','Bidco Africa','UNEP','Deloitte EA']):'',vip:R()<.08,notes:''})}
  const catalog=[
-  ['F&B','Breakfast buffet',1800],['F&B','Lunch set menu',2400],['F&B','Dinner à la carte',3200],['F&B','Coffee or tea',350],['F&B','Soft drink',300],['F&B','Beer',500],['F&B','Room service fee',400],
+  ['F&B','Breakfast buffet',1800],['F&B','Lunch set menu',2400],['F&B','Dinner a la carte',3200],['F&B','Coffee or tea',350],['F&B','Soft drink',300],['F&B','Beer',500],['F&B','Room service fee',400],
   ['Laundry','Shirt wash and iron',250],['Laundry','Suit dry-clean',1200],['Minibar','Water 500ml',150],['Minibar','Snack pack',450],
-  ['Spa','Swedish massage 60 min',5500],['Spa','Facial treatment',4000],
-  ['Transport','Airport transfer',4500],['Transport','City tour (half day)',7500],
-  ['Other','Late check-out fee',2500],['Other','Extra bed',2000],['Other','Parking (per day)',500]].map((c,i)=>({id:'c'+(i+1),dept:c[0],name:c[1],price:c[2]}));
- const inventory=[['Bath towels','Linen','pcs',180,120,650],['Bed sheets (queen)','Linen','sets',90,80,2400],['Pillow cases','Linen','pcs',210,150,320],['Shampoo 30ml','Toiletries','pcs',420,500,28],['Soap bar','Toiletries','pcs',640,500,18],['Toilet paper','Toiletries','rolls',300,240,35],['Water 500ml','Minibar','bottles',260,200,45],['Soft drinks','Minibar','cans',140,150,70],['Snack packs','Minibar','pcs',95,80,190],['Coffee beans','F&B','kg',22,15,1800],['Cooking oil','F&B','litres',48,30,420],['Floor cleaner','Cleaning','litres',36,25,260],['Laundry detergent','Cleaning','kg',30,40,310],['Light bulbs LED','Engineering','pcs',60,40,220]].map((x,i)=>({id:'i'+(i+1),name:x[0],category:x[1],unit:x[2],qty:x[3],reorder:x[4],cost:x[5]}));
- const data={v:2,settings,types,rooms,plans,guests,res:[],txns:[],expenses:[],tasks:[],inventory,staff,catalog,gateway:[],roomAvailability:[],journalEntries:[],seq:{res:0,txn:0}};
- S=data;
+  ['Spa','Swedish massage 60 min',5500],['Spa','Facial treatment',4000],['Transport','Airport transfer',4500],['Transport','City tour (half day)',7500],
+  ['Other','Late check-out fee',2500],['Other','Extra bed',2000],['Other','Parking (per day)',500]
+ ].map((c,i)=>({id:'c'+(i+1),dept:c[0],name:c[1],price:c[2]}));
+ const data={v:3,settings,types,rooms,plans,guests:[],res:[],txns:[],expenses:[],tasks:[],inventory:[],staff:[],catalog,gateway:[],roomAvailability:[],journalEntries:[],seq:{res:0,txn:0}};
  rooms.forEach(r=>{for(let d=addDays(T,-90);d<=addDays(T,365);d=addDays(d,1))data.roomAvailability.push({roomId:r.id,date:d,sellable:true,reason:''})});
- rooms.find(r=>r.no==='106').ooo=true;rooms.find(r=>r.no==='106').oooReason='AC compressor fault';
- rooms.find(r=>r.no==='305').ooo=true;rooms.find(r=>r.no==='305').oooReason='Bathroom leak';
- ['106','305'].forEach(no=>{const r=rooms.find(x=>x.no===no);for(let d=addDays(T,-3);d<=addDays(T,90);d=addDays(d,1)){const row=data.roomAvailability.find(x=>x.roomId===r.id&&x.date===d);row.sellable=false;row.reason=r.oooReason}});
- const alpha='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
- const mkPay=(resId,date,amount,method)=>{let ref,note='';
-  if(method==='M-Pesa'){ref='S'+Array.from({length:9},()=>alpha[ri(0,33)]).join('');note='M-Pesa STK push'}
-  else if(method==='Card'){ref='AUTH'+ri(100000,999999);note=pick(['Visa','Mastercard'])+' •••• '+ri(1000,9999)}
-  else if(method==='Cash'){ref='CSH'+ri(1000,9999)}else{ref='BNK'+ri(10000,99999);note='Bank transfer'}
-  return {id:'T'+String(++data.seq.txn).padStart(6,'0'),resId,date,time:String(ri(8,20)).padStart(2,'0')+':'+String(ri(0,59)).padStart(2,'0'),type:'payment',dept:'',method,net:0,tax:0,amount:round2(amount),ref,note}};
- const srcW=['Direct','Direct','Walk-in','Phone','Booking.com','Booking.com','Expedia','Corporate','Corporate','Travel agent'];
- const exAmt={'F&B':[800,4500],Laundry:[300,1500],Spa:[2500,6000],Minibar:[250,1200],Transport:[1500,5000]};
- const exNote={'F&B':['Restaurant dinner','Room service','Breakfast buffet'],Laundry:['Laundry'],Spa:['Massage'],Minibar:['Minibar'],Transport:['Airport transfer']};
- const meth=()=>pick(['M-Pesa','M-Pesa','M-Pesa','Card','Card','Cash','Bank']);
- rooms.forEach(rm=>{
-  const ty=types.find(t=>t.id===rm.typeId);let c=addDays(T,-75);const end=addDays(T,42);
-  while(c<end){
-   if(R()<.27){c=addDays(c,ri(1,3));continue}
-   const n=ri(1,6),ci=c,co=addDays(c,n);
-   if(rm.ooo&&ci<addDays(T,6)&&co>addDays(T,-3)){c=addDays(T,6);continue}
-   c=co;
-   const src=pick(srcW),plan=src==='Corporate'?'p_corp':(n>=5?'p_long':(R()<.15?'p_adv':'p_rack'));
-   const rate=Math.round(ty.rate*plans.find(p=>p.id===plan).mult/50)*50;
-   let status;
-   if(co<T)status=R()<.92?'checked_out':(R()<.6?'cancelled':'no_show');
-   else if(co===T)status=R()<.55?'checked_in':'checked_out';
-   else if(ci<T)status='checked_in';
-   else if(ci===T)status=R()<.4?'checked_in':'confirmed';
-   else status=R()<.03?'cancelled':'confirmed';
-   const g=pick(guests),cr=addDays(ci,-ri(3,30));
-   const r={id:'r'+(++data.seq.res),code:'R'+String(data.seq.res).padStart(5,'0'),guestId:g.id,roomId:rm.id,checkIn:ci,checkOut:co,adults:Math.min(ty.cap,ri(1,ty.cap)),children:ty.cap>2?ri(0,1):0,status,source:src,planId:plan,rate,notes:'',created:cr>T?T:cr};
-   data.res.push(r);
-   if(status==='checked_in'||status==='checked_out'){
-    const last=addDays(co,-1),maxD=last<T?last:T,cnt=ri(0,Math.min(4,n+1));
-    for(let i=0;i<cnt;i++){const dept=pick(['F&B','F&B','F&B','Laundry','Spa','Minibar','Transport']);const [lo,hi]=exAmt[dept];const net=Math.round(ri(lo,hi)/10)*10,tax=round2(net*settings.vat/100);
-     data.txns.push({id:'T'+String(++data.seq.txn).padStart(6,'0'),resId:r.id,date:addDays(ci,ri(0,nightsBetween(ci,maxD))),time:String(ri(8,21)).padStart(2,'0')+':'+String(ri(0,59)).padStart(2,'0'),type:'charge',dept,method:'',net,tax,amount:round2(net+tax),ref:'POS'+ri(1000,9999),note:pick(exNote[dept])})}
-    const f=folio(r);
-    if(status==='checked_out'){
-     const unpaid=src==='Corporate'&&co<addDays(T,-2)&&R()<.45;
-     if(!unpaid){if(R()<.35){const dep=Math.round(f.total*.3/10)*10;data.txns.push(mkPay(r.id,r.created,dep,meth()));data.txns.push(mkPay(r.id,co,f.total-dep,meth()))}else data.txns.push(mkPay(r.id,co,f.total,meth()))}
-    }else{const dep=Math.round(f.total*pick([.3,.5,1])/10)*10;data.txns.push(mkPay(r.id,ci,Math.min(dep,f.total),meth()))}
-   }else if(status==='confirmed'&&R()<.4){const f=folio(r);const d=addDays(ci,-ri(3,15));data.txns.push(mkPay(r.id,d>T?T:d,Math.round(f.total*.3/10)*10,meth()))}
-  }
- });
- rooms.forEach(rm=>{const dep=data.res.find(r=>r.roomId===rm.id&&r.status==='checked_out'&&r.checkOut===T);
-  if(dep&&R()<.7){rm.hk='dirty';rm.assignee=pick(['st4','st5','st6'])}else rm.hk=R()<.35?'inspected':'clean'});
- const addEx=(date,cat,vendor,amount,method,note)=>{if(date<=T&&date>=addDays(T,-100))data.expenses.push({id:'e'+(data.expenses.length+1),date,category:cat,vendor,amount:Math.round(amount/10)*10,method,ref:'EXP'+ri(1000,9999),note:note||''})};
- for(let m=-3;m<=0;m++){const d0=new Date(T.slice(0,7)+'-01T12:00:00');d0.setMonth(d0.getMonth()+m);const ym=iso(d0).slice(0,7),day=n=>ym+'-'+String(n).padStart(2,'0');
-  addEx(day(28),'Payroll','Staff payroll',ri(1600000,1800000),'Bank','Monthly payroll');
-  addEx(day(5),'Utilities','Kenya Power',ri(320000,420000),'Bank');addEx(day(8),'Utilities','Nairobi Water',ri(60000,90000),'Bank');
-  addEx(day(15),'Marketing & commissions','OTA commissions',ri(250000,450000),'Bank');
-  addEx(day(10),'Admin & licences','County licences and software',ri(80000,110000),'Bank');
-  addEx(day(15),'Tax remittance','VAT return payment',ri(700000,950000),'Bank');
-  [4,11,18,25].forEach(k=>{addEx(day(k),'Food & beverage cost','Produce and beverages supplier',ri(180000,260000),pick(['Bank','M-Pesa']));addEx(day(k+1),'Supplies & consumables','Housekeeping and guest supplies',ri(60000,110000),pick(['Bank','Cash']))});
-  addEx(day(12),'Repairs & maintenance','Contractors',ri(60000,200000),'Bank');addEx(day(22),'Repairs & maintenance','Spares and plumbing',ri(30000,90000),'Cash')}
- data.tasks=[
-  {id:'w1',roomId:'rm106',area:'',title:'AC compressor not cooling',priority:'High',status:'In progress',assignee:'st7',created:addDays(T,-2),blocks:true,notes:'Replacement part ordered'},
-  {id:'w2',roomId:'rm305',area:'',title:'Bathroom leak under basin',priority:'Urgent',status:'Open',assignee:'st7',created:addDays(T,-1),blocks:true,notes:''},
-  {id:'w3',roomId:'rm203',area:'',title:'Replace TV remote',priority:'Low',status:'Open',assignee:'',created:addDays(T,-3),blocks:false,notes:''},
-  {id:'w4',roomId:null,area:'Lobby',title:'Replace lobby ceiling lights',priority:'Medium',status:'Open',assignee:'st7',created:addDays(T,-5),blocks:false,notes:''},
-  {id:'w5',roomId:'rm402',area:'',title:'Door lock battery change',priority:'Medium',status:'Done',assignee:'st7',created:addDays(T,-6),blocks:false,notes:''}];
- data.gateway=data.txns.filter(t=>t.type==='payment'&&(t.method==='M-Pesa'||t.method==='Card')).slice(-8).map(t=>({id:uid('gw'),ts:t.date+' '+t.time,provider:t.method==='Card'?'Card gateway':'M-Pesa Daraja',event:t.method==='Card'?'charge.succeeded':'stk.success',ref:t.ref,amount:t.amount}));
  return data;
 }
-
 /* ---------- persistence ---------- */
-function load(){try{const raw=localStorage.getItem(LS);if(raw){const d=JSON.parse(raw);if(d&&d.res){d.v=2;d.roomAvailability=d.roomAvailability||[];d.journalEntries=d.journalEntries||[];S=d;return}}}catch(e){}S=seed();save()}
+function load(){try{const raw=localStorage.getItem(LS);if(raw){const d=JSON.parse(raw);if(d&&d.res){d.v=3;d.roomAvailability=d.roomAvailability||[];d.journalEntries=d.journalEntries||[];d.gateway=[];if(d.settings&&['Savannah Crest Hotel','Vavanna Hotel'].includes(d.settings.hotel))d.settings.hotel='Savanna Crest Hotel';S=d;return}}}catch(e){}S=seed();save()}
 function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
 
 /* ---------- lookups and calculations ---------- */
@@ -753,15 +682,9 @@ V.settings=()=>{
  ${fld('Booking sources (comma separated)',inp('s_src',s.sources.join(', ')),'full')}</div><div class="row mt"><button class="btn pri" data-act="setSave">Save settings</button></div></div>`;
  else if(ui.setTab==='rates')body=`<div class="g2" style="align-items:start"><div class="card"><div class="hd"><h3>Rate plans</h3><div class="grow"></div><button class="btn sm" data-act="planNew">Add plan</button></div><table class="t"><thead><tr><th>Plan</th><th class="num">Price vs rack rate</th><th></th></tr></thead><tbody>${S.plans.map(p=>`<tr><td class="bold">${esc(p.name)}</td><td class="num">${Math.round(p.mult*100)}%</td><td class="row"><button class="btn sm" data-act="planEdit" data-id="${p.id}">Edit</button>${S.plans.length>1?`<button class="btn sm danger" data-act="planDel" data-id="${p.id}">Delete</button>`:''}</td></tr>`).join('')}</tbody></table></div>
  <div class="card"><div class="hd"><h3>Service menu</h3><div class="grow"></div><button class="btn sm" data-act="catNew">Add item</button></div><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><thead><tr><th>Item</th><th>Dept</th><th class="num">Price</th><th></th></tr></thead><tbody>${S.catalog.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.dept)}</td><td class="num">${money(c.price)}</td><td class="row"><button class="btn sm" data-act="catEdit" data-id="${c.id}">Edit</button><button class="btn sm danger" data-act="catDel" data-id="${c.id}">Delete</button></td></tr>`).join('')}</tbody></table></div></div></div>`;
- else if(ui.setTab==='payments')body=`<div class="g2" style="align-items:start"><div class="card"><h3>Payment gateways</h3><div class="note warn" style="margin-bottom:12px">This build runs gateways in simulation mode. Nothing is charged and no request leaves your browser. Live M-Pesa and card processing needs a server that holds your secret keys.</div>
- <div class="frm"><div class="full"><b>M-Pesa (Safaricom Daraja)</b></div>${fld('Environment',sel('s_menv',['sandbox','production'],s.mpesaEnv))}${fld('Paybill or till number',inp('s_mshort',s.mpesaShort))}${fld('Callback URL (your server)',inp('s_mcb',s.mpesaCallback,'placeholder="https://api.yourhotel.co.ke/mpesa/callback"'),'full')}
- <div class="full"><b>Cards</b></div>${fld('Provider',sel('s_cprov',['Stripe','Pesapal','Flutterwave','DPO Group','Paystack'],s.cardProvider))}${fld('Publishable key (public only)',inp('s_ckey',s.cardKey,'placeholder="pk_..."'))}</div>
- <div class="note mt small">Never enter consumer secrets, passkeys or secret API keys here. They belong in server environment variables.</div><div class="row mt"><button class="btn pri" data-act="setSave">Save gateway settings</button></div></div>
- <div><div class="card"><h3>Going live checklist</h3><div class="list small"><div class="li">Stand up a backend API with a database (Postgres) and move this data model into it.</div><div class="li">M-Pesa: create a Daraja app, then implement STK Push and a public HTTPS callback that verifies and records each result.</div><div class="li">Cards: create the payment intent on the server and confirm it from a webhook, never from the browser.</div><div class="li">Match every gateway event to a folio by reference, and reject duplicates.</div><div class="li">Add staff logins with roles, an audit trail, and nightly backups.</div></div></div>
- <div class="card mt"><h3>Gateway event log</h3><div class="tw" style="max-height:260px;overflow-y:auto"><table class="t"><thead><tr><th>Time</th><th>Provider</th><th>Event</th><th>Ref</th><th class="num">Amount</th></tr></thead><tbody>${S.gateway.slice().reverse().slice(0,40).map(g=>`<tr><td>${esc(g.ts)}</td><td>${esc(g.provider)}</td><td><span class="chip ${/success|succeeded|refund/.test(g.event)?'ok':/fail|cancel|declin/.test(g.event)?'bad':''}">${esc(g.event)}</span></td><td>${esc(g.ref)}</td><td class="num">${g.amount?money(g.amount):''}</td></tr>`).join('')||`<tr><td colspan="5">${empty('No gateway events yet')}</td></tr>`}</tbody></table></div></div></div></div>`;
- else body=`<div class="card" style="max-width:720px"><h3>Your data</h3><p class="muted">Everything is stored in this browser only. Download a backup regularly, and use a server database before running a real property on it.</p><div class="row"><button class="btn" data-act="backup">Download backup (JSON)</button></div>
- <h3 class="mt">Demo data</h3><div class="row"><button class="btn" data-act="resetDemo">Reload demo data</button></div><p class="small muted">Operational record deletion is disabled in the browser demo. The production API retains audit records and requires an authorised retention workflow.</p></div>`;
- return `${tabs(ui.setTab,[['property','Property and tax'],['rates','Rates and services'],['payments','Payments'],['data','Data']],'setTab')}${body}`};
+ else if(ui.setTab==='payments')body=`<div class="card" style="max-width:720px"><h3>Payment recording</h3><p class="muted">Record payments after they have been received and confirmed through your payment provider. This page does not initiate M-Pesa or card transactions.</p><div class="note warn">Payment records are saved in this browser. They are not sent to a shared hotel database.</div></div>`;
+ else body=`<div class="card" style="max-width:720px"><h3>Data and storage</h3><p class="muted">Records are saved in this browser on this device. Other staff and devices cannot see them. Download a JSON backup regularly.</p><div class="row"><button class="btn" data-act="backup">Download backup (JSON)</button></div></div>`;
+ return `${tabs(ui.setTab,[['property','Property and tax'],['rates','Rates and services'],['payments','Payment recording'],['data','Data and storage']],'setTab')}${body}`};
 window.__V={V,A,IN,CH,ui,setPreset,navHtml,NAV,syncS,sel,inp,fld,gv,gn,opt,empty,rsChip,roomChip,statementRows,txRows,incomeData,METHODS,EXP_CATS,DEPTS,kpi,money,RSL};
 })();
 (function(){
@@ -916,7 +839,7 @@ A.cancelGo=()=>{
  if(f.paid>0.5){
   if(gv('cx_opt')==='retain'){const net=round2(f.paid/(1+S.settings.vat/100));S.txns.push({id:nextTxn(),resId:id,date:T,time:nowTime(),type:'charge',dept:'Other',method:'',net,tax:round2(f.paid-net),amount:f.paid,ref:'FEE'+rand(4),note:kind==='noshow'?'No-show fee (deposit retained)':'Cancellation fee (deposit retained)'})}
   else{const by={};f.pays.forEach(t=>by[t.method]=(by[t.method]||0)+t.amount);f.rf.forEach(t=>by[t.method]=(by[t.method]||0)-t.amount);
-   Object.keys(by).forEach(m=>{if(by[m]>0.5){const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:T,time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:round2(by[m]),ref,note:'Refund on cancellation'});gw(m,'refund.succeeded',ref,by[m])}})}
+   Object.keys(by).forEach(m=>{if(by[m]>0.5){const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:T,time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:round2(by[m]),ref,note:'Refund on cancellation'})}})}
  }
  r.status=kind==='noshow'?'no_show':'cancelled';const why=gv('cx_reason').trim();if(why)r.notes=(r.notes?r.notes+' · ':'')+why;
  closeModal();commit();toast(kind==='noshow'?'Marked as no-show':'Booking cancelled','ok');
@@ -939,7 +862,6 @@ A.chargeSave=el=>{const id=el.dataset.id,p=gn('ch_price'),q=Math.max(1,Math.roun
 A.void=el=>{const id=el.dataset.id,t=el.dataset.t;S.txns=S.txns.filter(x=>x.id!==t);H.save();render();resModal(id);toast('Charge voided')};
 
 /* ---------- payments ---------- */
-function gw(provider,event,ref,amount){S.gateway.push({id:uid('gw'),ts:todayISO()+' '+nowTime(),provider:provider==='Card'?'Card gateway':provider==='M-Pesa'?'M-Pesa Daraja':provider,event,ref,amount:amount||0});if(S.gateway.length>200)S.gateway.shift()}
 function recordPayment(id,method,amount,ref,note){S.txns.push({id:nextTxn(),resId:id,date:todayISO(),time:nowTime(),type:'payment',dept:'',method,net:0,tax:0,amount:round2(amount),ref,note})}
 function payModal(id,o){
  o=o||{};const r=resv(id),g=guest(r.guestId),f=folio(r);
@@ -947,17 +869,13 @@ function payModal(id,o){
  if(o.co!=null&&o.fresh)pay.co=!!o.co;
  Object.assign(pay,o.set||{});
  modalRes=null;
- if(pay.stage==='wait'){openModal('M-Pesa payment',`<div style="text-align:center"><div class="spin" role="status" aria-label="Waiting for guest"></div><p class="bold" style="margin:0">Prompt sent to ${esc(pay.phone)}</p><p class="muted" style="margin:6px 0 0">Waiting for the guest to enter their M-Pesa PIN for ${money2(pay.amount)}.</p></div><div class="note warn mt small">Simulation: choose what the guest does. A live integration receives this result from the Daraja callback on your server.</div>`,`<button class="btn" data-act="mpesaFail">Guest cancels</button><button class="btn pri" data-act="mpesaOk">Guest confirms</button>`);return}
- if(pay.stage==='card'){openModal('Card payment',`<div style="text-align:center"><div class="spin" role="status" aria-label="Authorising card"></div><p class="bold" style="margin:0">Authorising ${money2(pay.amount)}</p></div>`,'');return}
  const m=pay.method;let fields='';
  if(m==='Cash')fields=fld('Cash received',inp('pay_tend',pay.tend||'','type="number" min="0" step="0.01" data-in="payTend"'))+`<div class="fld"><span>Change to give</span><div class="bold" id="pay_chg" style="padding:7px 0">${money2(0)}</div></div>`;
- else if(m==='M-Pesa')fields=fld('Guest M-Pesa number',inp('pay_phone',pay.phone,'inputmode="tel"'),'full');
- else if(m==='Card')fields=fld('Name on card',inp('pay_name',pay.name||g.name),'full')+fld('Card number',inp('pay_card','','inputmode="numeric" autocomplete="off" placeholder="4242 4242 4242 4242"'),'full')+fld('Expiry (MM/YY)',inp('pay_exp','','placeholder="08/29" autocomplete="off"'))+fld('CVC',inp('pay_cvc','','inputmode="numeric" maxlength="4" autocomplete="off"'));
- else fields=fld('Bank reference',inp('pay_ref',pay.ref||''),'full');
+ else if(m==='M-Pesa')fields=fld('Guest M-Pesa number',inp('pay_phone',pay.phone,'inputmode="tel"'))+fld('M-Pesa receipt code',inp('pay_ref',pay.ref||''));
+ else fields=fld(m==='Card'?'Card receipt or terminal reference':'Bank reference',inp('pay_ref',pay.ref||''),'full');
  const body=`<div class="note" style="margin-bottom:12px">Balance due <b>${money2(f.balance)}</b> on ${r.code}, room ${room(r.roomId).no}.</div><div class="pay-methods" role="group" aria-label="Payment method">${METHODS.map(x=>`<button class="pm" data-act="payMethod" data-m="${x}" aria-pressed="${m===x}">${x}</button>`).join('')}</div>
- <div class="frm">${fld('Amount',inp('pay_amt',pay.amount,'type="number" min="0" step="0.01"'),'full')}${fields}<div class="full" id="pay_err"></div></div>
- ${m==='Card'?'<p class="small muted" style="margin:10px 0 0">Simulation. Use 4242 4242 4242 4242 to approve or 4000 0000 0000 0002 to see a decline. Card numbers and CVC are never stored, only the last four digits.</p>':''}`;
- openModal('Take payment',body,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="payGo">${m==='M-Pesa'?'Send M-Pesa prompt':m==='Card'?'Charge card':'Record payment'}</button>`);
+ <div class="frm">${fld('Amount',inp('pay_amt',pay.amount,'type="number" min="0" step="0.01"'),'full')}${fields}<div class="full" id="pay_err"></div></div>`;
+ openModal('Record payment',body,`<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="payGo">Record payment</button>`);
 }
 A.pay=el=>payModal(el.dataset.id,{fresh:true,co:el.dataset.co==='1'});
 A.payMethod=el=>{const a=gn('pay_amt');payModal(pay.id,{set:{method:el.dataset.m,amount:a}})};
@@ -973,23 +891,11 @@ A.payGo=()=>{
  pay.amount=amt;
  if(m==='Cash'){const t=gn('pay_tend');if(t&&t<amt)return err('Cash received is less than the amount.');return payDone('CSH'+rand(4),'Cash',t>amt?'Change given '+money2(t-amt):'')}
  if(m==='Bank'){const rf=gv('pay_ref').trim();if(!rf)return err('Enter the bank reference.');return payDone(rf,'Bank','Bank transfer')}
- if(m==='M-Pesa'){let p=gv('pay_phone').replace(/[\s+\-]/g,'');if(/^0[71]\d{8}$/.test(p))p='254'+p.slice(1);if(!/^254[71]\d{8}$/.test(p))return err('Enter a valid Kenyan mobile number, like 0712 345 678.');
-  pay.phone=p;pay.stage='wait';gw('M-Pesa','stk.initiated','',amt);H.save();return payModal(pay.id)}
- const num=gv('pay_card').replace(/\D/g,''),ex=gv('pay_exp').match(/^(0[1-9]|1[0-2])\s*\/?\s*(\d{2})$/),cvc=gv('pay_cvc');
- if(!gv('pay_name').trim())return err('Enter the name on the card.');
- let s=0,alt=false;for(let i=num.length-1;i>=0;i--){let d=+num[i];if(alt){d*=2;if(d>9)d-=9}s+=d;alt=!alt}
- if(num.length<13||s%10!==0)return err('That card number is not valid.');
- if(!ex)return err('Enter the expiry as MM/YY.');
- const now=new Date();if(2000+ +ex[2]<now.getFullYear()||(2000+ +ex[2]===now.getFullYear()&&+ex[1]<now.getMonth()+1))return err('This card has expired.');
- if(!/^\d{3,4}$/.test(cvc))return err('Enter the 3 or 4 digit CVC.');
- const brand=/^4/.test(num)?'Visa':/^5[1-5]|^2[2-7]/.test(num)?'Mastercard':/^3[47]/.test(num)?'Amex':'Card',last=num.slice(-4),declined=num==='4000000000000002';
- pay.stage='card';payModal(pay.id);
- setTimeout(()=>{if(!pay)return;
-  if(declined){gw('Card','charge.declined','',amt);pay.stage='form';H.save();payModal(pay.id);$id('pay_err').innerHTML='<div class="note bad">The card was declined. Ask the guest for another card or use a different method.</div>';return}
-  const ref='AUTH'+rand(6);gw('Card','charge.succeeded',ref,amt);payDone(ref,'Card',brand+' •••• '+last)},1100);
+ if(m==='M-Pesa'){let p=gv('pay_phone').replace(/[\s+\-]/g,'');if(/^0[71]\d{8}$/.test(p))p='254'+p.slice(1);if(!/^254[71]\d{8}$/.test(p))return err('Enter a valid Kenyan mobile number.');
+  const ref=gv('pay_ref').trim().toUpperCase();if(!ref)return err('Enter the M-Pesa receipt code after confirming payment.');return payDone(ref,'M-Pesa','M-Pesa from '+p)}
+ const ref=gv('pay_ref').trim();if(!ref)return err(m==='Card'?'Enter the card receipt or terminal reference.':'Enter the bank reference.');
+ payDone(ref,m,m==='Card'?'Card payment confirmed':'Bank transfer');
 };
-A.mpesaOk=()=>{const ref='S'+Array.from({length:9},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*34)]).join('');gw('M-Pesa','stk.success',ref,pay.amount);payDone(ref,'M-Pesa','M-Pesa from '+pay.phone)};
-A.mpesaFail=()=>{gw('M-Pesa','stk.cancelled','',pay.amount);pay.stage='form';H.save();payModal(pay.id);$id('pay_err').innerHTML='<div class="note bad">The guest cancelled the prompt. No money was taken.</div>'};
 A.refund=el=>{
  const id=el.dataset.id,f=folio(resv(id)),by={};f.pays.forEach(t=>by[t.method]=(by[t.method]||0)+t.amount);f.rf.forEach(t=>by[t.method]=(by[t.method]||0)-t.amount);
  const ms=Object.keys(by).filter(m=>by[m]>0.5);modalRes=null;
@@ -999,7 +905,7 @@ A.refund=el=>{
 };
 A.refundGo=el=>{const by=pending,id=el.dataset.id,m=gv('rf_m'),a=round2(gn('rf_amt'));
  if(a<=0||a>by[m]+0.01){$id('rf_err').innerHTML=`<div class="note bad">Enter an amount between 0 and ${money2(by[m])}.</div>`;return}
- const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:todayISO(),time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:a,ref,note:gv('rf_reason')||'Refund'});gw(m,'refund.succeeded',ref,a);
+ const ref='RFD'+rand(6);S.txns.push({id:nextTxn(),resId:id,date:todayISO(),time:nowTime(),type:'refund',dept:'',method:m,net:0,tax:0,amount:a,ref,note:gv('rf_reason')||'Refund'});
  pending=null;H.save();render();resModal(id);toast('Refund of '+money2(a)+' recorded','ok')};
 A.invoice=el=>{
  const r=resv(el.dataset.id),g=guest(r.guestId),rm=room(r.roomId),f=folio(r),s=S.settings,ty=typeOf(rm.typeId);
@@ -1112,7 +1018,6 @@ A.catEdit=el=>{modalRes=null;openModal('Edit menu item',catForm(S.catalog.find(c
 A.catSave=el=>{const id=el&&el.dataset.id,n=gv('c_name').trim();if(!n||gn('c_price')<0)return;const d={name:n,dept:gv('c_dept'),price:gn('c_price')};if(id)Object.assign(S.catalog.find(c=>c.id===id),d);else S.catalog.push(Object.assign({id:uid('c')},d));closeModal();commit()};
 A.catDel=el=>{S.catalog=S.catalog.filter(c=>c.id!==el.dataset.id);ui.pos.cart={};commit()};
 A.backup=()=>saveFile('hotel-backup-'+todayISO()+'.json',JSON.stringify(S,null,2));
-A.resetDemo=()=>confirmBox('Reload demo data?','This replaces everything in this browser with sample data.','Reload',()=>{H.seed();H.save();sync();ui.pos={resId:'',cart:{}};render();toast('Demo data loaded','ok')},true);
 A.clearOps=()=>toast('Operational data deletion is disabled. Use the audited retention workflow in the API.','bad');
 
 /* ---------- csv ---------- */
